@@ -5,3 +5,6 @@
 	path = lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
 	branch = v4.8.1
+[submodule "lib/teleporter"]
+	path = lib/teleporter
+	url = https://github.com/ava-labs/teleporter
