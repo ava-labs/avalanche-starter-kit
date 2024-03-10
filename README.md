@@ -36,7 +36,7 @@ For convenience the default airdrop private `56289e99c94b6912bfc12adc093c9b51124
 
 ## Deploying Contracts
 
-Make sure to replace the blockchainID in the contract with the ID of your Subnet's blockchain.
+Make sure to replace the blockchainID in the sender contract `src/0-send-receive/senderOnCChain.sol` with the ID of your Subnet's blockchain.
 
 ```
 forge create --rpc-url c-chain --private-key $PK src/0-send-receive/senderOnCChain.sol:SenderOnCChain
@@ -49,13 +49,14 @@ forge create --rpc-url mysubnet --private-key $PK src/0-send-receive/receiverOnS
 ```
 
 ## Sending a Message
+
+You can find `<sender_contract_address>` in the output of the first and the <receiver_contract_address> of the second `forge create` command.
+
 ```
 cast send --rpc-url c-chain --private-key $PK <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
 ```
 
-cast send --rpc-url c-chain --private-key $PK 0xa4DfF80B4a1D748BF28BC4A271eD834689Ea3407 "sendMessage(address,string)" 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 "Hello"
-
 ## Verifying Message Receipt
 ```
-cast call --rpc-url mysubnet 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 "lastMessage()(string)"
+cast call --rpc-url mysubnet <receiver_contract_address> "lastMessage()(string)"
 ```
