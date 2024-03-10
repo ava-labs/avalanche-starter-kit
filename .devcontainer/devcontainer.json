@@ -1,0 +1,20 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+	"name": "Teleporter StarterKit Dev Container",
+
+	"build": { "dockerfile": "Dockerfile" },
+	"runArgs": ["--network=host"],
+
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+	
+	"remoteEnv": {
+		"PATH": "${containerEnv:PATH}:/"
+	},
+
+	"postCreateCommand": {
+		"test": "echo 'Hello from the postCreateCommand!'",
+		"foundry": "./scripts/install_foundry.sh"
+	}
+}
