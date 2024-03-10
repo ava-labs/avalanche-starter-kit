@@ -1,66 +1,48 @@
-## Foundry
+## Teleporter Starter Kit
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+# Set Up
 
-Foundry consists of:
+## Start local Avalanche Network 
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```
+avalanche network start
 ```
 
-### Test
+## Launching your own Teleporter enabled Subnet
 
-```shell
-$ forge test
+```
+avalanche subnet create my-subnet
 ```
 
-### Format
-
-```shell
-$ forge fmt
+```
+avalanche subnet deploy
 ```
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
+```
+avalanche subnet describe my-subnet
 ```
 
-### Anvil
+Make sure to add the RPC Url to the `foundry.toml` file to interact with the Subnet
 
-```shell
-$ anvil
+```
+[rpc_endpoints]
+c-chain = "http://localhost:9650/ext/bc/C/rpc"
+my-subnet = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 ```
 
-### Deploy
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+# Issuing Transactions with Foundry
+
+For convenience the default airdrop private `56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027` is stored in the environment variable `$PK`. Furthermore, the RPC-url for the C-Chain is set in the `foundry.toml` file. 
+
+
+## Sending Tokens
+```
+cast send --rpc-url c-chain --private-key $PK 0xF0f06058ca7B6e46E2B238F6d34A604DB1E2612f --value 1ether 
 ```
 
-### Cast
-
-```shell
-$ cast <subcommand>
+## Deploying Contracts
+```
+TBD
 ```
 
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
