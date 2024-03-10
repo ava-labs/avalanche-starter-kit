@@ -2,16 +2,8 @@
 
 # Set Up
 
-## Start local Avalanche Network 
-
 ```
-avalanche network start
-```
-
-## Launching your own Teleporter enabled Subnet
-
-```
-avalanche subnet create my-subnet
+avalanche subnet create mysubnet
 ```
 
 ```
@@ -19,7 +11,7 @@ avalanche subnet deploy
 ```
 
 ```
-avalanche subnet describe my-subnet
+avalanche subnet describe mysubnet
 ```
 
 Make sure to add the RPC Url to the `foundry.toml` file to interact with the Subnet
