@@ -21,7 +21,8 @@ contract SenderOnCChain {
 
         return teleporterMessenger.sendCrossChainMessage(
             TeleporterMessageInput({
-                destinationBlockchainID: 0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7,
+                // Replace with chain id of your Subnet (see instructions in Readme)
+                destinationBlockchainID: 0x92756d698399805f0088fc07fc42af47c67e1d38c576667ac6c7031b8df05293,
                 destinationAddress: destinationAddress,
                 feeInfo: TeleporterFeeInfo({
                     feeTokenAddress: address(0),
