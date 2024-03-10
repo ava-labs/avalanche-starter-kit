@@ -2,10 +2,10 @@
 src = "src"
 out = "out"
 libs = ["lib"]
-solc = 0.8.18
+solc = "0.8.18"
 
 [rpc_endpoints]
 c-chain = "http://localhost:9650/ext/bc/C/rpc"
-# your-subnet = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
+mysubnet = "http://localhost:9650/ext/bc/mysubnet/rpc"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
