@@ -35,6 +35,23 @@ cast send --rpc-url c-chain --private-key $PK 0xF0f06058ca7B6e46E2B238F6d34A604D
 
 ## Deploying Contracts
 ```
-TBD
+forge create --rpc-url c-chain --private-key $PK src/0-send-receive/senderOnCChain.sol:SenderOnCChain
+
 ```
 
+```
+forge create --rpc-url mysubnet --private-key $PK src/0-send-receive/receiverOnSubnet.sol:ReceiverOnSubnet
+
+```
+
+## Sending a Message
+```
+cast send --rpc-url c-chain --private-key $PK <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
+```
+
+cast send --rpc-url c-chain --private-key $PK 0x5DB9A7629912EBF95876228C24A848de0bfB43A9 "sendMessage(address,string)" 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 "Hello"
+
+## Verifying Message Receipt
+```
+cast call --rpc-url mysubnet 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 "lastMessage()(string)"
+```
