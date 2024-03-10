@@ -50,7 +50,7 @@ forge create --rpc-url mysubnet --private-key $PK src/0-send-receive/receiverOnS
 
 ## Sending a Message
 
-You can find `<sender_contract_address>` in the output of the first and the <receiver_contract_address> of the second `forge create` command.
+You can find `<sender_contract_address>` in the output of the first and the `<receiver_contract_address>` of the second `forge create` command.
 
 ```
 cast send --rpc-url c-chain --private-key $PK <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
