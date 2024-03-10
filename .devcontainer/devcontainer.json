@@ -4,17 +4,12 @@
 
 	"build": { "dockerfile": "Dockerfile" },
 	"runArgs": ["--network=host"],
-
-	"features": {
-		"ghcr.io/devcontainers/features/git:1": {}
-	},
 	
 	"remoteEnv": {
-		"PATH": "${containerEnv:PATH}:/"
+		"PATH": "${containerEnv:PATH}:/usr/local/bin/"
 	},
 
 	"postCreateCommand": {
-		"test": "echo 'Hello from the postCreateCommand!'",
-		"foundry": "./scripts/install_foundry.sh"
+		
 	}
 }
