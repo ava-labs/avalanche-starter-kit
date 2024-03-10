@@ -12,5 +12,17 @@
 
 	"postCreateCommand": {
 		"git-submodules": "git submodule update --init --recursive",
-	}
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+		  "settings": {
+			"git.autofetch": true
+		  },
+		  "extensions": [
+			"juanblanco.solidity"
+			]
+		}
+	  }
 }
