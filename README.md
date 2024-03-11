@@ -7,7 +7,7 @@ avalanche subnet create mysubnet
 ```
 
 ```
-avalanche subnet deploy
+avalanche subnet deploy mysubnet
 ```
 
 ```
