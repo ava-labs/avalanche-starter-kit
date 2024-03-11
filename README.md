@@ -1,6 +1,29 @@
 ## Teleporter Starter Kit
 
+This starter kit will get you started with cross-Subnet smart contracts using Teleporter in no time. It includes:
+
+- Avalanche CLI: Run a local Avalanche Network
+- Foundry:
+  - Forge: Compile and Deploy smart contracts to the local network, Fuji Testnet or Mainnet
+  - Cast: Interact with these smart contracts
+- Teleporter: All contracts you may to interact with Teleporter
+- AWM Relayer: The binary to run your own relayer
+
 # Set Up
+
+This starter kit utilizes a Dev Container specification. Dev Containers use containerization to create consistent and isolated development environments. These containers can be run using GitHub Codespaces or locally using Docker and VS Code. You can switch back and forth between the two options.
+
+## Run on Github Codespace
+
+You can run them directly on Github by clicking **Code**, switching to the **Codespaces** tab and clicking **Create codespace on main**. A new window will open that loads the codespace. Afterwards you will see a browser version of VS code with all the dependencies installed. Codespace time out after some time of inactivity, but can be restarted. 
+
+## Run locally
+
+Alternatively, you can run them locally. You need [docker](https://www.docker.com/products/docker-desktop/) installed and [VS Code](https://code.visualstudio.com/) with the extensions [Dev Container extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+
+# Starting a local Avalanche Network
+
+To start a local Avalanche network with your own teleporter-enabled Subnet inside the container follow these commands. Your Avalanche network will be completely independent of the Avalanche Mainnet and Fuji Testnet. It will have its own Primary Network (C-Chain, X-Chain & P-Chain). You will not have access to services available on Fuji (such as Chainlink services or bridges). If you require these, go to the [Fuji Testnet](#fuji-testnet) section.
 
 ```
 avalanche subnet create mysubnet
