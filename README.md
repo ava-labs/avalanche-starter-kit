@@ -32,7 +32,11 @@ For convenience the private key `56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a76
 
 ### Setting the Blockchain ID in the Contracts
 
-Make sure to replace the blockchainID in the sender contract `src/0-send-receive/senderOnCChain.sol` with the ID of your Subnet's blockchain. You can find the blockchainID of your Subnet with this command:
+Make sure to replace the blockchainID in the sender contract `src/0-send-receive/senderOnCChain.sol` with the ID of your Subnet's blockchain.
+
+> :no_entry_sign: blockchainID of Subnet ≠ chainID of Subnet
+
+You can find the blockchainID of your Subnet with this command:
 
 ```
 cast call --rpc-url mysubnet 0x0200000000000000000000000000000000000005 "getBlockchainID()(bytes32)" 
@@ -41,7 +45,7 @@ cast call --rpc-url mysubnet 0x0200000000000000000000000000000000000005 "getBloc
 ```
 teleporterMessenger.sendCrossChainMessage(
     TeleporterMessageInput({
-        // Replace with chain id of your Subnet (see instructions in Readme)
+        // Replace with blockchainID of your Subnet (see instructions in Readme)
         destinationBlockchainID: 0x92756d698399805f0088fc07fc42af47c67e1d38c576667ac6c7031b8df05293,
         destinationAddress: destinationAddress,
         
