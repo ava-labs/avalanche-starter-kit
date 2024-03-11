@@ -11,7 +11,7 @@ This starter kit will get you started with cross-Subnet smart contracts using Te
 
 # Set Up
 
-This starter kit utilizes a Dev Container specification. Dev Containers use containerization to create consistent and isolated development environments. These containers can be run using GitHub Codespaces or locally using Docker and VS Code. You can switch back and forth between the two options.
+This starter kit utilizes a Dev Container specification. Dev Containers use containerization to create consistent and isolated development environments. All of the above mentioned components are pre-installed in that container. These containers can be run using GitHub Codespaces or locally using Docker and VS Code. You can switch back and forth between the two options.
 
 ## Run on Github Codespace
 
