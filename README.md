@@ -2,12 +2,12 @@
 
 This starter kit will get you started with cross-Subnet smart contracts using Teleporter in no time. It includes:
 
-- Avalanche CLI: Run a local Avalanche Network
-- Foundry:
+- **Avalanche CLI**: Run a local Avalanche Network
+- **Foundry**:
   - Forge: Compile and Deploy smart contracts to the local network, Fuji Testnet or Mainnet
   - Cast: Interact with these smart contracts
-- Teleporter: All contracts you may to interact with Teleporter
-- AWM Relayer: The binary to run your own relayer
+- **Teleporter**: All contracts you may to interact with Teleporter
+- **AWM Relayer**: The binary to run your own relayer
 
 # Set Up
 
