@@ -3,22 +3,18 @@
 
 // SPDX-License-Identifier: Ecosystem
 
-pragma solidity 0.8.18;
+pragma solidity ^0.8.18;
 
 import "@teleporter/ITeleporterMessenger.sol";
 import "@teleporter/ITeleporterReceiver.sol";
 
 contract ReceiverOnSubnet is ITeleporterReceiver {
-
-    ITeleporterMessenger public immutable teleporterMessenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
+    ITeleporterMessenger public immutable teleporterMessenger =
+        ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
 
     string public lastMessage;
 
-    function receiveTeleporterMessage(
-        bytes32,
-        address,
-        bytes calldata message
-    ) external {
+    function receiveTeleporterMessage(bytes32, address, bytes calldata message) external {
         // Only the Teleporter receiver can deliver a message.
         require(msg.sender == address(teleporterMessenger), "ReceiverOnSubnet: unauthorized TeleporterMessenger");
 

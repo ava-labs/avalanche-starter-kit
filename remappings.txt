@@ -1,6 +1,6 @@
 ds-test/=lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/
 
-@openzeppelin/contracts@4.8.1/=/lib/openzeppelin-contracts/contracts/
+@openzeppelin/contracts@4.8.1/=lib/openzeppelin-contracts/contracts/
 @avalabs/subnet-evm-contracts@1.2.0/=lib/teleporter/contracts/lib/subnet-evm/contracts/
 @teleporter/=lib/teleporter/contracts/src/Teleporter/
