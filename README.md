@@ -99,3 +99,18 @@ After adapting the contracts you can deploy them using your keystore wallet:
 forge create --rpc-url fuji-c --keystore $KEYSTORE src/0-send-receive/senderOnCChain.sol:SenderOnCChain
 ```
 
+```
+forge create --rpc-url dispatch --keystore $KEYSTORE src/0-send-receive/receiverOnSubnet.sol:ReceiverOnSubnet
+
+```
+
+### Sending a Message
+
+```
+cast send --rpc-url fuji-c --keystore $KEYSTORE <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
+```
+
+### Verifying Message Receipt
+```
+cast call --rpc-url dispatch <receiver_contract_address> "lastMessage()(string)"
+```
