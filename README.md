@@ -86,6 +86,15 @@ Head to the [Avalanche Testnet Faucet](https://core.app/tools/testnet-faucet/?su
 
 ### Deploying Contracts
 
+Make sure to adapt the destinationBlockchainID of your contracts to use the blockchain IDs of the Fuji network:
+
+| Chain | Blockchain ID |
+|-------|---------------|
+| Fuji C-Chain | 0x7fc93d85c6d62c5b2ac0b519c87010ea5294012d1e407030d6acd0021cac10d5 |
+| Dispatch | 0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7 |
+
+After adapting the contracts you can deploy them using your keystore wallet:
+
 ```
 forge create --rpc-url fuji-c --keystore $KEYSTORE src/0-send-receive/senderOnCChain.sol:SenderOnCChain
 ```
