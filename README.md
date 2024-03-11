@@ -18,7 +18,7 @@ Make sure to add the RPC Url to the `foundry.toml` file to interact with the Sub
 
 ```
 [rpc_endpoints]
-c-chain = "http://localhost:9650/ext/bc/C/rpc"
+local-c = "http://localhost:9650/ext/bc/C/rpc"
 my-subnet = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 ```
 
@@ -31,7 +31,7 @@ cast call --rpc-url mysubnet 0x0200000000000000000000000000000000000005 "getBloc
 
 # Issuing Transactions with Foundry
 
-For convenience the default airdrop private `56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027` is stored in the environment variable `$PK`. Furthermore, the RPC-url for the C-Chain is set in the `foundry.toml` file. 
+For convenience the default airdrop private `56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027` is stored in the environment variable `$PK`. Furthermore, the RPC-url for the C-Chain of your local network is set in the `foundry.toml` file. 
 
 
 ## Deploying Contracts
@@ -39,7 +39,7 @@ For convenience the default airdrop private `56289e99c94b6912bfc12adc093c9b51124
 Make sure to replace the blockchainID in the sender contract `src/0-send-receive/senderOnCChain.sol` with the ID of your Subnet's blockchain.
 
 ```
-forge create --rpc-url c-chain --private-key $PK src/0-send-receive/senderOnCChain.sol:SenderOnCChain
+forge create --rpc-url local-c --private-key $PK src/0-send-receive/senderOnCChain.sol:SenderOnCChain
 
 ```
 
@@ -53,7 +53,7 @@ forge create --rpc-url mysubnet --private-key $PK src/0-send-receive/receiverOnS
 You can find `<sender_contract_address>` in the output of the first and the `<receiver_contract_address>` of the second `forge create` command.
 
 ```
-cast send --rpc-url c-chain --private-key $PK <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
+cast send --rpc-url local-c --private-key $PK <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
 ```
 
 ## Verifying Message Receipt
