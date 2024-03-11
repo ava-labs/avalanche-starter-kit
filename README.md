@@ -25,16 +25,16 @@ Alternatively, you can run them locally. You need [docker](https://www.docker.co
 
 To start a local Avalanche network with your own teleporter-enabled Subnet inside the container follow these commands. Your Avalanche network will be completely independent of the Avalanche Mainnet and Fuji Testnet. It will have its own Primary Network (C-Chain, X-Chain & P-Chain). You will not have access to services available on Fuji (such as Chainlink services or bridges). If you require these, go to the [Fuji Testnet](#fuji-testnet) section.
 
+First let's create out Subnet configuration. Follow the dialog and if you don't have special requirements for precompiles just follow the suggested options. Keep the name "mysubnet" to avoid additional configuration.
+
 ```
 avalanche subnet create mysubnet
 ```
 
-```
-avalanche subnet deploy mysubnet
-```
+Now let's spin up the local Avalanche network and deploy our Subnet. This will also deploy the Teleporter messenger and the registry on our Subnet and the C-Chain.
 
 ```
-avalanche subnet describe mysubnet
+avalanche subnet deploy mysubnet
 ```
 
 Make sure to add the RPC Url to the `foundry.toml` file if you have chosen a different name than `mysubnet`. If you've used `mysubnet` the rpc is already configured.
@@ -45,7 +45,6 @@ local-c = "http://localhost:9650/ext/bc/C/rpc"
 mysubnet = "http://localhost:9650/ext/bc/mysubnet/rpc"
 anothersubnet = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 ```
-
 
 # Issuing Transactions with Foundry
 
