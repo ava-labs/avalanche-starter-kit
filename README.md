@@ -1,4 +1,4 @@
-## Teleporter Starter Kit
+# Teleporter Starter Kit
 
 This starter kit will get you started with cross-Subnet smart contracts using Teleporter in no time. It includes:
 
