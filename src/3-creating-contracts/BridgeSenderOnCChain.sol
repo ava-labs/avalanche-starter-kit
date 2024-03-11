@@ -9,14 +9,17 @@ import "@teleporter/ITeleporterMessenger.sol";
 import "./BridgeActions.sol";
 
 contract ERC20MinterSenderOnCChain {
-    ITeleporterMessenger public immutable teleporterMessenger =
-        ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
+    // The Teleporter registry contract manages different Teleporter contract versions.
+    TeleporterRegistry public immutable teleporterRegistry =
+        TeleporterRegistry(0x827364Da64e8f8466c23520d81731e94c8DDe510);
 
     /**
      * @dev Sends a message to another chain.
      */
     function sendCreateTokenMessage(address destinationAddress, string memory name, string memory symbol) external {
-        teleporterMessenger.sendCrossChainMessage(
+        ITeleporterMessenger messenger = teleporterRegistry.getLatestTeleporter();
+
+        messenger.sendCrossChainMessage(
             TeleporterMessageInput({
                 // Replace with chain id of your Subnet (see instructions in Readme)
                 destinationBlockchainID: 0xd7cdc6f08b167595d1577e24838113a88b1005b471a6c430d79c48b4c89cfc53,

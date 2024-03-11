@@ -5,26 +5,20 @@
 
 pragma solidity ^0.8.18;
 
+import "@teleporter/upgrades/TeleporterRegistry.sol";
 import "@teleporter/ITeleporterMessenger.sol";
 import "@teleporter/ITeleporterReceiver.sol";
 import "./MyERC20Token.sol";
 import "./BridgeActions.sol";
 
 contract TokenMinterReceiverOnBulletin is ITeleporterReceiver {
-    ITeleporterMessenger public immutable teleporterMessenger =
-        ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
-    address public tokenAddress;
+    TeleporterRegistry public immutable teleporterRegistry =
+        TeleporterRegistry(0x827364Da64e8f8466c23520d81731e94c8DDe510);
 
-    // Errors
-    error Unauthorized();
-
-    function receiveTeleporterMessage(bytes32 originChainID, address originSenderAddress, bytes calldata message)
-        external
-    {
-        // Only the Teleporter receiver can deliver a message.
-        if (msg.sender != address(teleporterMessenger)) {
-            revert Unauthorized();
-        }
+    function receiveTeleporterMessage(bytes32, address, bytes calldata message) external {
+        // Only a Teleporter Messenger registered in the registry can deliver a message.
+        // Function throws an error if msg.sender is not registered.
+        teleporterRegistry.getVersionFromAddress(msg.sender);
 
         // Decoding the Action type:
         (BridgeAction actionType, bytes memory paramsData) = abi.decode(message, (BridgeAction, bytes));
