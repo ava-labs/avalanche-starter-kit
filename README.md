@@ -105,7 +105,7 @@ Head to the [Avalanche Testnet Faucet](https://core.app/tools/testnet-faucet/?su
 
 ### Setting the Blockchain ID in the Contracts
 
-Make sure to adapt the destinationBlockchainID of your contracts to use the blockchain IDs of the Fuji network:
+Make sure to adapt the destinationBlockchainID of your sending contracts to use the blockchain IDs of the Fuji network:
 
 | Chain | Blockchain ID |
 |-------|---------------|
