@@ -107,17 +107,21 @@ cast call --rpc-url mysubnet <receiver_contract_address> "lastMessage()(string)"
 
 #### Deploying Token Bridge
 
-You can deploy a bridge to send your Subnet's native token to the C-Chain
+You can deploy a bridge to send your Subnet's native token to the C-Chain.
 
-Deploy a contract to wrap your Native Token. Feel free to rename "ExampleWNATV" to your native token's name with an appended "W". For example, my native token symbol is "NATV" so the contract would be changed to "WNATV".
+Deploy a contract to wrap your Native Token as an ERC20. Feel free to rename "ExampleWNATV" to your native token's name with an appended "W". For example, my native token symbol is "NATV" so the contract would be changed to "WNATV".
 
 ```bash
 forge create --rpc-url mysubnet --private-key $PK src/4-erc20-bridge/ExampleWNATV.sol:WNATV --constructor-args
 ```
 
+Deploy the sender contract for the wrapped tokens on your Subnet.
+
 ```bash
 forge create --rpc-url mysubnet --private-key $PK src/4-erc20-bridge/NativeTokenSource.sol:NativeTokenSenderOnSubnet --constructor-args
 ```
+
+Deploy the Receiver Contract for the wrapped tokens on C-Chain.
 
 ```bash
 forge create --rpc-url local-c --private-key $PK src/4-erc20-bridge/ERC20Destination.sol:NativeTokenReceiverOnCChain --constructor-args
