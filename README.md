@@ -62,7 +62,7 @@ Make sure to replace the blockchainID in the sender contract `src/0-send-receive
 You can find the blockchainID of your Subnet with this command:
 
 ```bash
-cast call --rpc-url mysubnet 0x0200000000000000000000000000000000000005 "getBlockchainID()(bytes32)" 
+cast call --rpc-url mysubnet 0x0200000000000000000000000000000000000005 "getBlockchainID()(bytes32)"
 ```
 
 ```solidity
@@ -71,7 +71,7 @@ teleporterMessenger.sendCrossChainMessage(
         // Replace with blockchainID of your Subnet (see instructions in Readme)
         destinationBlockchainID: 0x92756d698399805f0088fc07fc42af47c67e1d38c576667ac6c7031b8df05293,
         destinationAddress: destinationAddress,
-        
+
         // ...
     })
 );
@@ -105,6 +105,24 @@ cast send --rpc-url local-c --private-key $PK <sender_contract_address> "sendMes
 cast call --rpc-url mysubnet <receiver_contract_address> "lastMessage()(string)"
 ```
 
+#### Deploying Token Bridge
+
+You can deploy a bridge to send your Subnet's native token to the C-Chain
+
+Deploy a contract to wrap your Native Token. Feel free to rename "ExampleWNATV" to your native token's name with an appended "W". For example, my native token symbol is "NATV" so the contract would be changed to "WNATV".
+
+```bash
+forge create --rpc-url mysubnet --private-key $PK src/4-erc20-bridge/ExampleWNATV.sol:WNATV --constructor-args
+```
+
+```bash
+forge create --rpc-url mysubnet --private-key $PK src/4-erc20-bridge/NativeTokenSource.sol:NativeTokenSenderOnSubnet --constructor-args
+```
+
+```bash
+forge create --rpc-url local-c --private-key $PK src/4-erc20-bridge/ERC20Destination.sol:NativeTokenReceiverOnCChain --constructor-args
+```
+
 ### Fuji Testnet
 
 #### Creating a Wallet
@@ -131,10 +149,10 @@ Head to the [Avalanche Testnet Faucet](https://core.app/tools/testnet-faucet/?su
 
 Make sure to adapt the destinationBlockchainID of your sending contracts to use the blockchain IDs of the Fuji network:
 
-| Chain | Blockchain ID |
-|-------|---------------|
+| Chain        | Blockchain ID                                                      |
+| ------------ | ------------------------------------------------------------------ |
 | Fuji C-Chain | 0x7fc93d85c6d62c5b2ac0b519c87010ea5294012d1e407030d6acd0021cac10d5 |
-| Dispatch | 0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7 |
+| Dispatch     | 0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7 |
 
 #### Deploying the Contracts
 
