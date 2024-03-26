@@ -14,6 +14,7 @@ import "./BridgeActions.sol";
 contract TokenMinterReceiverOnBulletin is ITeleporterReceiver {
     TeleporterRegistry public immutable teleporterRegistry =
         TeleporterRegistry(0x827364Da64e8f8466c23520d81731e94c8DDe510);
+    address public tokenAddress;
 
     function receiveTeleporterMessage(bytes32, address, bytes calldata message) external {
         // Only a Teleporter Messenger registered in the registry can deliver a message.

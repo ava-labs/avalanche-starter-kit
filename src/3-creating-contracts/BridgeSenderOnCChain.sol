@@ -5,6 +5,7 @@
 
 pragma solidity ^0.8.18;
 
+import "@teleporter/upgrades/TeleporterRegistry.sol";
 import "@teleporter/ITeleporterMessenger.sol";
 import "./BridgeActions.sol";
 
@@ -33,7 +34,9 @@ contract ERC20MinterSenderOnCChain {
     }
 
     function sendMintTokenMessage(address destinationAddress, address to, uint256 amount) external {
-        teleporterMessenger.sendCrossChainMessage(
+        ITeleporterMessenger messenger = teleporterRegistry.getLatestTeleporter();
+
+        messenger.sendCrossChainMessage(
             TeleporterMessageInput({
                 destinationBlockchainID: 0xd7cdc6f08b167595d1577e24838113a88b1005b471a6c430d79c48b4c89cfc53,
                 destinationAddress: destinationAddress,

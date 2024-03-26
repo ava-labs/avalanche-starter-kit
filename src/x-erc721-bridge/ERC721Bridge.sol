@@ -59,7 +59,7 @@ contract ERC721Bridge is IERC721Bridge, TeleporterOwnerUpgradeable, IERC721Recei
      * @dev Initializes the Teleporter Messenger used for sending and receiving messages,
      * and initializes the current chain ID.
      */
-    constructor(address teleporterRegistryAddress) TeleporterOwnerUpgradeable(teleporterRegistryAddress) {
+    constructor(address teleporterRegistryAddress) TeleporterOwnerUpgradeable(teleporterRegistryAddress, msg.sender) {
         currentBlockchainID = IWarpMessenger(WARP_PRECOMPILE_ADDRESS).getBlockchainID();
     }
 
