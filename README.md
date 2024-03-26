@@ -6,9 +6,9 @@ This starter kit will get you started with cross-Subnet smart contracts using Te
 - **Foundry**:
   - Forge: Compile and Deploy smart contracts to the local network, Fuji Testnet or Mainnet
   - Cast: Interact with these smart contracts
-- **Teleporter**: All contracts you may to interact with Teleporter
+- **Teleporter**: All contracts you may want to interact with Teleporter
 - **AWM Relayer**: The binary to run your own relayer
-- **Examples**: Contracts showcasing how to achieve common patterns, such as sending simple messages, call functions of a contract on another blockchain and bridging assets. Please note that these example contracts have not audited and are for educational purposes only
+- **Examples**: Contracts showcasing how to achieve common patterns, such as sending simple messages, call functions of a contract on another blockchain and bridging assets. Please note that these example contracts have not been audited and are for educational purposes only
 
 ## Set Up
 
@@ -18,7 +18,7 @@ This starter kit utilizes a Dev Container specification. Dev Containers use cont
 
 You can run them directly on Github by clicking **Code**, switching to the **Codespaces** tab and clicking **Create codespace on main**. A new window will open that loads the codespace. Afterwards you will see a browser version of VS code with all the dependencies installed. Codespace time out after some time of inactivity, but can be restarted.
 
-### Run locally
+### Run Dev Container locally with Docker
 
 Alternatively, you can run them locally. You need [docker](https://www.docker.com/products/docker-desktop/) installed and [VS Code](https://code.visualstudio.com/) with the extensions [Dev Container extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers). Then clone the repository and open it in VS Code. VS Code will ask you if you want to reopen the project in a container.
 
