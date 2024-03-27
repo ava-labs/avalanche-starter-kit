@@ -1,6 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
-	"name": "Teleporter StarterKit Dev Container",
+	"name": "Avalanche Starter Kit",
 
 	"build": { "dockerfile": "Dockerfile" },
 	"runArgs": ["--network=host"],
