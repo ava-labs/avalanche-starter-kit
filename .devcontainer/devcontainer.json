@@ -1,29 +1,29 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
 	"name": "Avalanche Starter Kit",
-
-	"build": { "dockerfile": "Dockerfile" },
-	"runArgs": ["--network=host"],
-	
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": [
+		"--network=host"
+	],
 	"remoteEnv": {
 		"PATH": "${containerEnv:PATH}:/usr/local/bin/",
 		"PK": "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027",
 		"KEYSTORE": "${containerWorkspaceFolder}/keystore"
 	},
-
 	"postCreateCommand": {
-		"git-submodules": "git submodule update --init --recursive",
+		"git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
 	},
-
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
-		  "settings": {
-			"git.autofetch": true
-		  },
-		  "extensions": [
-			"juanblanco.solidity"
+			"settings": {
+				"git.autofetch": true
+			},
+			"extensions": [
+				"juanblanco.solidity"
 			]
 		}
-	  }
+	}
 }
