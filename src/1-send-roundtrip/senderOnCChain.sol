@@ -31,7 +31,7 @@ contract SenderOnCChain {
 
     function receiveTeleporterMessage(bytes32, address, bytes calldata message) external {
         // Only the Teleporter receiver can deliver a message.
-        require(msg.sender == address(teleporterMessenger), "SenderOnCChain: unauthorized TeleporterMessenger");
+        require(msg.sender == address(messenger), "SenderOnCChain: unauthorized TeleporterMessenger");
 
         // Store the message.
         rountripMessage = abi.decode(message, (string));
