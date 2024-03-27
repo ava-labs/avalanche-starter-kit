@@ -1,6 +1,6 @@
-# Teleporter Starter Kit
+# Avalanche Starter Kit
 
-This starter kit will get you started with cross-Subnet smart contracts using Teleporter in no time. It includes:
+This starter kit will get you started with developing solidity smart contract dApps on the C-Chain or on an Avalanche Subnet. It provides all tools to build cross-Subnet dApps using Teleporter. It includes:
 
 - **Avalanche CLI**: Run a local Avalanche Network
 - **Foundry**:
