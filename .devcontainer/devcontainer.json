@@ -15,6 +15,30 @@
 	"postCreateCommand": {
 		"git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
 	},
+	"forwardPorts": [
+		9650,
+		9652,
+		9654,
+		9656,
+		9658
+	],
+	"portsAttributes": {
+		"9650": {
+			"label": "Node-1"
+		},
+		"9652": {
+			"label": "Node-2"
+		},
+		"9654": {
+			"label": "Node-3"
+		},
+		"9656": {
+			"label": "Node-4"
+		},
+		"9657": {
+			"label": "Node-5"
+		}
+	},
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
