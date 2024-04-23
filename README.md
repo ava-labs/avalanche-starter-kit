@@ -26,7 +26,7 @@ Alternatively, you can run them locally. You need [docker](https://www.docker.co
 
 To start a local Avalanche network with your own teleporter-enabled Subnet inside the container follow these commands. Your Avalanche network will be completely independent of the Avalanche Mainnet and Fuji Testnet. It will have its own Primary Network (C-Chain, X-Chain & P-Chain). You will not have access to services available on Fuji (such as Chainlink services or bridges). If you require these, go to the [Fuji Testnet](#fuji-testnet) section.
 
-First let's create out Subnet configuration. Follow the dialog and if you don't have special requirements for precompiles just follow the suggested options. Keep the name "mysubnet" to avoid additional configuration.
+First let's create out Subnet configuration. Follow the dialog and if you don't have special requirements for precompiles just follow the suggested options. For the Airdrop of the native token select "Airdrop 1 million tokens to the default ewoq address (do not use in production)". Keep the name "mysubnet" to avoid additional configuration.
 
 ```
 avalanche subnet create mysubnet
@@ -62,8 +62,10 @@ Make sure to replace the blockchainID in the sender contract `src/0-send-receive
 You can find the blockchainID of your Subnet with this command:
 
 ```bash
-cast call --rpc-url mysubnet 0x0200000000000000000000000000000000000005 "getBlockchainID()(bytes32)" 
+avalanche subnet describe mysubnet
 ```
+
+Take the HEX blockchain ID and replace it sender contract:
 
 ```solidity
 teleporterMessenger.sendCrossChainMessage(
