@@ -17,8 +17,10 @@ Make sure to replace the blockchainID in the sender contract `src/0-send-receive
 You can find the blockchainID of your Subnet with this command:
 
 ```bash
-cast call --rpc-url mysubnet 0x0200000000000000000000000000000000000005 "getBlockchainID()(bytes32)" 
+avalanche subnet describe mysubnet
 ```
+
+Take the HEX blockchain ID and replace it sender contract:
 
 ```solidity
 teleporterMessenger.sendCrossChainMessage(
