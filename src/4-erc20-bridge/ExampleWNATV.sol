@@ -5,7 +5,7 @@
 
 pragma solidity 0.8.18;
 
-import {IWrappedNativeToken} from "../interfaces/IWrappedNativeToken.sol";
+import {IWrappedNativeToken} from "src/4-erc20-bridge/interfaces/IWrappedNativeToken.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
