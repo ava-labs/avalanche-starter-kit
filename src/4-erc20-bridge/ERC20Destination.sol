@@ -5,12 +5,12 @@
 
 pragma solidity 0.8.18;
 
-import {TeleporterTokenDestination} from "./TeleporterTokenDestination.sol";
-import {IERC20Bridge} from "./interfaces/IERC20Bridge.sol";
+import {TeleporterTokenDestination} from "src/4-erc20-bridge/TeleporterTokenDestination.sol";
+import {IERC20Bridge} from "src/4-erc20-bridge/interfaces/IERC20Bridge.sol";
 import {SafeERC20TransferFrom} from "@teleporter/SafeERC20TransferFrom.sol";
 import {IERC20, ERC20} from "@openzeppelin/contracts@4.8.1/token/ERC20/ERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts@4.8.1/token/ERC20/utils/SafeERC20.sol";
-import {SendTokensInput} from "./interfaces/ITeleporterTokenBridge.sol";
+import {SendTokensInput} from "src/4-erc20-bridge/interfaces/ITeleporterTokenBridge.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
