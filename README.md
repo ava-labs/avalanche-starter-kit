@@ -47,7 +47,7 @@ mysubnet = "http://localhost:9650/ext/bc/mysubnet/rpc"
 anothersubnet = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 ```
 
-## Codeexamples
+## Code Examples
 - [0-send-receive](src/0-send-receive/_INSTRUCTIONS.md) 
 - [1-send-roundtrip](src/2-invoking-functions/_INSTRUCTIONS.md)
 - [2-invoking-functions](src/0-send-receive/_INSTRUCTIONS.md)
