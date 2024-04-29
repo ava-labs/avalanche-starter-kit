@@ -5,10 +5,11 @@ libs = ["lib"]
 solc = "0.8.18"
 
 [rpc_endpoints]
-local-c = "http://localhost:9650/ext/bc/C/rpc"
+local-c = "https://legendary-acorn-jq5pxx4rx4r2j56r-9650.app.github.dev/ext/bc/C/rpc"
 mysubnet = "http://localhost:9650/ext/bc/mysubnet/rpc"
 fuji-c = "https://api.avax-test.network/ext/bc/C/rpc"
 dispatch = "https://subnets.avax.network/dispatch/testnet/rpc"
+mamaSubnet = "https://legendary-acorn-jq5pxx4rx4r2j56r-9650.app.github.dev/ext/bc/HzvA1ASvY2EaK7kB6BHhAjE23cczyHbFibDPYcarmzVP9qoZX/rpc"
 
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
