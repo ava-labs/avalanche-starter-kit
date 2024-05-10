@@ -2,6 +2,8 @@
 
 The following code example will show you how to send a Subnet's native token and to the C-Chain using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
+**All token bridge contracts and interfaces implemented in this example implementation are maintained in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/contracts/src) repository.**
+
 If you prefer full end-to-end testing written in Goland for bridging ERC20s, Native tokens, or any combination of the two, you can view the test workflows directly in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/tests/flows) repository.
 
 Deep dives on each template interface can be found [here](https://github.com/ava-labs/teleporter-token-bridge/blob/main/contracts/README.md).
@@ -104,16 +106,22 @@ Make sure to make note of the following parameters, **which will vary with each 
 
 As you deploy the teleporter contracts, keeping track of their addresses will make testing and troubleshooting much easier. The parameters you should keep track of include:
 
-| Parameter                      | Network | Description                                                                                                                                         |
-| :----------------------------- | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Funded Address (with 1000000)  | Both    | The address you use to deploy contracts, and send tokens through the bridge. Used as the `teleporterManager` constructor parameter in this example. |
-| Teleporter Registry            | C-Chain | Address of the TeleporterRegistry contract on C-Chain deployed by the CLI                                                                           |
-| Teleporter Registry            | Subnet  | Address of the TeleporterRegistry contract on Subnet deployed by the CLI                                                                            |
-| Wrapped Token Contract Address | Subnet  | Address of the TeleporterRegistry contract on Subnet deployed by the CLI                                                                            |
+| Parameter                     | Network | Description                                                                                                                                         |
+| :---------------------------- | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Funded Address (with 1000000) | Both    | The address you use to deploy contracts, and send tokens through the bridge. Used as the `teleporterManager` constructor parameter in this example. |
+| Teleporter Registry           | C-Chain | Address of the TeleporterRegistry contract on C-Chain deployed by the CLI                                                                           |
+| Teleporter Registry           | Subnet  | Address of the TeleporterRegistry contract on Subnet deployed by the CLI                                                                            |
+| Wrapped Native Token          | Subnet  | Address of the wrapped token contract for your Subnet's native token to be deployed on the Subnet                                                   |
+| Native Token Source           | Subnet  | Address of the bridge's source contract to be deployed on the Subnet                                                                                |
+| ERC20 Destination             | C-Chain | Address of the bridge's destination contract to be deployed on the C-Chain                                                                          |
+| Subnet Blockchain ID          | Subnet  | Hexadecimal representation of the Subnet's Blockchain ID. Returned by `avalanche subnet describe <subnetName>`.                                     |
+| C-Chain Blockchain ID         | C-Chain | Hexadecimal representation of the C-Chain's Blockchain ID on the selected network. Returned by `avalanche primary describe`.                        |
 
 ## Deploy Bridge Contracts
 
-On your Subnet, deploy a wrapped token contract for your native token. When we configured the Subnet earlier, we named the token `NATV`. This is reflected in line 19 of our [example wrapped token contract](src/5-native-token-bridge/ExampleWNATV.sol).
+### Wrapped Native Token
+
+On your Subnet, deploy a wrapped token contract for your native token. When we configured the Subnet earlier, we named the token `NATV`. This is reflected in line 19 of our [example wrapped token contract](/src/5-native-token-bridge/ExampleWNATV.sol).
 
 ```
 forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/ExampleWNATV.sol:WNATV
@@ -131,35 +139,58 @@ Deployed to: 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
 Transaction hash: 0x054e7b46b221c30f400b81df0fa2601668ae832054cf8e8b873f4ba615fa4115
 ```
 
-Next
+### Native Token Source
 
-```
-forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/NativeTokenSource.sol:NativeTokenSource --constructor-args <Registry>0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3
-<Manager>0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
-<WrappedTokenAddress>0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
+To bridge the token out of your Subnet, you'll need to first deploy a _source_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenSource` contract standard.
+
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenSource.sol](/src/5-native-token-bridge/NativeTokenSource.sol) contract, passing in the following constructor arguments:
+
+```zsh
+forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/NativeTokenSource.sol:NativeTokenSource --constructor-args <teleporterRegistry> <teleporterManager> <wrappedTokenAddress>
 ```
 
-```
+- Teleporter Registry (for our Subnet)
+- Teleporter Manager (our funded address)
+- Wrapped Token Address (deployed in the last step)
+
+For example, this foundry command could be entered into your terminal as:
+
+```zsh
 forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/NativeTokenSource.sol:NativeTokenSource --constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
 ```
 
-```
-forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args
-<Registry>0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 <Manager>0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC <SourceBlockchainID(HEX)>0x9c95f1209fd476ce703f698b2d6e657a63815d9963e50adedb7a5150a33bec4f
-<tokenSourceAddress> 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25
-<tokenName> "Wrapped NATV"
-<tokenSymbol>"WNATV"
-<decimals>18
+Note the address the source contract was "Deployed to".
+
+### ERC20 Destination
+
+To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _destination_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenDestination`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this destination contract must also inherit the properties of a standard `ERC20` contract.
+
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Destination.sol](/src/5-native-token-bridge/NativeTokenSource.sol) contract, passing in the following constructor arguments:
+
+```zsh
+forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args <TeleporterRegistry> <TeleporterManager> <SourceBlockchainID> <TokenSourceAddress> <TokenName> <TokenSymbol> <TokenDecimals>
 ```
 
-```
-forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0xbcb8143686b1f0c765a1404bb94ad13134cafa5cf56f181a3a990ba21b1151b9 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "Wrapped NATV" "WNATV" 18
+- Teleporter Registry Address **(for C-Chain)**
+- Teleporter Manager (our funded address)
+- Source Blockchain ID (hexidecimal representation of our Subnet's Blockchain ID)
+- Token Source Address (address of NativeTokenSource.sol deployed on Subnet in the last step)
+- Token Name (input in the constructor of the [wrapped token contract](/src/5-native-token-bridge/ExampleWNATV.sol))
+- Token Symbol (input in the constructor of the [wrapped token contract](/src/5-native-token-bridge/ExampleWNATV.sol))
+- Token Decimals (uint8 integer representing number of decimal places for the ERC20 token being created. Most ERC20 tokens follow the Ethereum standard, which defines 18 decimal places.)
+
+To get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
+
+```zsh
+avalanche subnet describe mysubnet
 ```
 
-TeleporterRegistry: 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3
-Funded Address(manager): 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+For example, this contract deployment could be entered into your terminal as:
 
-“Deployed to”
-WNATV(mysubnet): 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
-NativeTokenSource(mysubnet): 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25
-ERC20Destination(c-chain):
+```zsh
+forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0xbcb8143686b1f0c765a1404bb94ad13134cafa5cf56f181a3a990ba21b1151b9 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "Wrapped NATV" "WNATV" 18
+```
+
+Note the address the source contract was "Deployed to".
+
+## Send the Token Cross-chain
