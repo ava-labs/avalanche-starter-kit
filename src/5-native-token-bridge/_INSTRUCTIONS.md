@@ -121,7 +121,7 @@ As you deploy the teleporter contracts, keeping track of their addresses will ma
 
 ### Wrapped Native Token
 
-On your Subnet, deploy a wrapped token contract for your native token. When we configured the Subnet earlier, we named the token `NATV`. This is reflected in line 19 of our [example wrapped token contract](/src/5-native-token-bridge/ExampleWNATV.sol).
+On your Subnet, deploy a wrapped token contract for your native token. When we configured the Subnet earlier, we named the token `NATV`. This is reflected in line 19 of our [example wrapped token contract](./ExampleWNATV.sol).
 
 ```
 forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/ExampleWNATV.sol:WNATV
@@ -143,7 +143,7 @@ Transaction hash: 0x054e7b46b221c30f400b81df0fa2601668ae832054cf8e8b873f4ba615fa
 
 To bridge the token out of your Subnet, you'll need to first deploy a _source_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenSource` contract standard.
 
-Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenSource.sol](/src/5-native-token-bridge/NativeTokenSource.sol) contract, passing in the following constructor arguments:
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenSource.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
 
 ```zsh
 forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/NativeTokenSource.sol:NativeTokenSource --constructor-args <teleporterRegistry> <teleporterManager> <wrappedTokenAddress>
@@ -165,7 +165,7 @@ Note the address the source contract was "Deployed to".
 
 To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _destination_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenDestination`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this destination contract must also inherit the properties of a standard `ERC20` contract.
 
-Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Destination.sol](/src/5-native-token-bridge/NativeTokenSource.sol) contract, passing in the following constructor arguments:
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Destination.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
 
 ```zsh
 forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args <TeleporterRegistry> <TeleporterManager> <SourceBlockchainID> <TokenSourceAddress> <TokenName> <TokenSymbol> <TokenDecimals>
@@ -175,8 +175,8 @@ forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20
 - Teleporter Manager (our funded address)
 - Source Blockchain ID (hexidecimal representation of our Subnet's Blockchain ID)
 - Token Source Address (address of NativeTokenSource.sol deployed on Subnet in the last step)
-- Token Name (input in the constructor of the [wrapped token contract](/src/5-native-token-bridge/ExampleWNATV.sol))
-- Token Symbol (input in the constructor of the [wrapped token contract](/src/5-native-token-bridge/ExampleWNATV.sol))
+- Token Name (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
+- Token Symbol (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
 - Token Decimals (uint8 integer representing number of decimal places for the ERC20 token being created. Most ERC20 tokens follow the Ethereum standard, which defines 18 decimal places.)
 
 To get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
@@ -193,4 +193,56 @@ forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20
 
 Note the address the source contract was "Deployed to".
 
-## Send the Token Cross-chain
+## Bridge the Token Cross-chain
+
+Now that all the bridge contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
+
+```zsh
+cast send --rpc-url mysubnet --private-key $PK <tokenSourceAddress> "<functionToCall((parameterTypes))>" "(<functionParameter0>,<functionParameter1>,...)" --value <amountOfTokensToSend>
+```
+
+In line 60 of [`NativeTokenSource`](./NativeTokenSource.sol) is the send function we will call to send the tokens:
+
+```sol
+function send(SendTokensInput calldata input) external payable {
+        _send(input, msg.value, false);
+    }
+```
+
+The function parameters are defined by the `SendTokensInput` struct defined in line 26 of [`ITeleporterTokenBridge`](./interfaces/ITeleporterTokenBridge.sol).
+
+```sol
+struct SendTokensInput {
+    bytes32 destinationBlockchainID;
+    address destinationBridgeAddress;
+    address recipient;
+    address feeTokenAddress;
+    uint256 primaryFee;
+    uint256 secondaryFee;
+    uint256 requiredGasLimit;
+}
+```
+
+- destinationBlockchainID: C-Chain Blockchain ID
+- destinationBridgeAddress: ERC20 Destination address
+- recipient: any Ethereum Address you want to send funds to
+- primaryFee: amount of tokens to pay for Teleporter fee on the source chain, can be 0 for this example
+- feeTokenAddress: Wrapped Native Token address
+- secondaryFee: amount of tokens to pay for Teleporter fee if a multi-hop is needed, can be 0 for this example
+- requiredGasLimit: gas limit requirement for sending to a token bridge, can be 1000 for this example
+
+For example, this token transfer could be entered into your terminal as:
+
+```zsh
+cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "send((bytes32,address,address,uint256,uint256,uint256))" "(0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241,0x5DB9A7629912EBF95876228C24A848de0bfB43A9,0x2e1A3ebbec1e2e88AB2aeF742E234501845db5D7,0,0,1000)" --value 1
+```
+
+If your parameters were entered correctly, this command will sign and publish a transaction, resulting in a large JSON response of transaction information in the terminal.
+
+To confirm the token was bridged from Subnet to C-Chain, we will check the recipient's balance of wrapped tokens on the C-Chain with the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call?highlight=cast%20call#cast-call) foundry command:
+
+```zsh
+cast call --rpc-url local-c <ERC20Destination> "balanceOf(address)(uint)" <recipientAddress>
+```
+
+If the command returns a balance greater than 0, congratulations, you've now successfully deployed a Teleporter-enabled bridge and successfully sent tokens cross-chain!
