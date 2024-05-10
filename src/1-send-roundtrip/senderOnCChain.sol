@@ -6,8 +6,9 @@
 pragma solidity ^0.8.18;
 
 import "@teleporter/ITeleporterMessenger.sol";
+import "@teleporter/ITeleporterReceiver.sol";
 
-contract SenderOnCChain {
+contract SenderOnCChain is ITeleporterReceiver {
     ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
 
     string public rountripMessage;
@@ -19,7 +20,7 @@ contract SenderOnCChain {
         messenger.sendCrossChainMessage(
             TeleporterMessageInput({
                 // Replace with blockchainID of your Subnet (see instructions in Readme)
-                destinationBlockchainID: 0xa1adcd8b9ac1d5665494c4b8a830594b6486213aef8cfdb8beee61a31eae793f,
+                destinationBlockchainID: 0xb72b346fcc8c1ebb30087e2d2841eac9302dde8fc5969dcc84fad6db5ebd261d,
                 destinationAddress: destinationAddress,
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 100000,
