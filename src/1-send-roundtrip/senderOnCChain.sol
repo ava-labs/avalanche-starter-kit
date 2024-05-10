@@ -11,7 +11,7 @@ import "@teleporter/ITeleporterReceiver.sol";
 contract SenderOnCChain is ITeleporterReceiver {
     ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
 
-    string public rountripMessage;
+    string public roundtripMessage;
 
     /**
      * @dev Sends a message to another chain.
@@ -20,7 +20,7 @@ contract SenderOnCChain is ITeleporterReceiver {
         messenger.sendCrossChainMessage(
             TeleporterMessageInput({
                 // Replace with blockchainID of your Subnet (see instructions in Readme)
-                destinationBlockchainID: 0xb72b346fcc8c1ebb30087e2d2841eac9302dde8fc5969dcc84fad6db5ebd261d,
+                destinationBlockchainID: 0x609fa1886e1fbc9585127fa22b6e77a785ebdeecc01049f294638c7909e53c5e,
                 destinationAddress: destinationAddress,
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 100000,
@@ -35,6 +35,6 @@ contract SenderOnCChain is ITeleporterReceiver {
         require(msg.sender == address(messenger), "SenderOnCChain: unauthorized TeleporterMessenger");
 
         // Store the message.
-        rountripMessage = abi.decode(message, (string));
+        roundtripMessage = abi.decode(message, (string));
     }
 }

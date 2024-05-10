@@ -49,11 +49,11 @@ forge create --rpc-url mysubnet --private-key $PK src/1-send-roundtrip/receiverO
 You can find `<sender_contract_address>` in the output of the first and the `<receiver_contract_address>` of the second `forge create` command in the line saying `Deployed to:`.
 
 ```bash
-cast send --rpc-url local-c --private-key $PK <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
+cast send --rpc-url local-c --private-key $PK <sender_contract_address> "sendMessage(address)" <receiver_contract_address>
 ```
 
 ### Verifying Message Receipt
 
 ```bash
-cast call --rpc-url local-c <sender_contract_address> "rountripMessage()(string)"
+cast call --rpc-url local-c <sender_contract_address> "roundtripMessage()(string)"
 ```
