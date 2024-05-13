@@ -1,26 +1,26 @@
 # Bridge a Subnet's Native Token to the C-Chain
 
-The following code example will show you how to send a Subnet's native token and to the C-Chain using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
+The following code example will show you how to send a Subnet's native token to the C-Chain using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
 **All token bridge contracts and interfaces implemented in this example implementation are maintained in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/contracts/src) repository.**
 
-If you prefer full end-to-end testing written in Goland for bridging ERC20s, Native tokens, or any combination of the two, you can view the test workflows directly in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/tests/flows) repository.
+If you prefer full end-to-end testing written in Golang for bridging ERC20s, native tokens, or any combination of the two, you can view the test workflows directly in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/tests/flows) repository.
 
 Deep dives on each template interface can be found [here](https://github.com/ava-labs/teleporter-token-bridge/blob/main/contracts/README.md).
 
-_Disclaimer: The teleporter-token-bridge contracts used in this tutorial are under active development and are not yet intended for production deployments. Use on Mainnet at your own risk._
+_Disclaimer: The teleporter-token-bridge contracts used in this tutorial are under active development and are not yet intended for production deployments. Use at your own risk._
 
 ## Local Network Environment
 
-For convenience the private key `56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027` of the default airdrop address is stored in the environment variable `$PK` in `.devcontainer/devcontainer.json`. Furthermore, the RPC url for the C-Chain and any Subnet created with the name `mysubnet` on a local network is set in the `foundry.toml` file.
+For convenience the private key `56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027` of the default airdrop address is stored in the environment variable `$PK` in `.devcontainer/devcontainer.json`. Furthermore, the RPC url for the C-Chain `local-c` and any Subnet created with the name `mysubnet` on a local network is set in the `foundry.toml` file.
 
 ### Useful Commands
 
-This tutorial uses the Avalanche-CLI. Some useful commands you can utilize to get information about your local network and subnet during testing are:
+This tutorial uses the Avalanche-CLI. Some useful commands you can utilize to get information about your local network and Subnet during testing are:
 
 - `avalanche primary describe`: prints details of the primary network configuration, including `blockchainID` to the console
 - `avalanche subnet describe <subnetName>`: prints details of the subnet configuration, including `blockchainID` to the console
-- `avalanche key list --local --subnet mysubnet`: prints information for all stored signing keys, including native token balances
+- `avalanche key list --local --subnet <subnetName>`: prints information for all stored signing keys, including native token balances
 
 ## Subnet Configuration
 
@@ -94,7 +94,7 @@ Chain ID:          797979
 Currency Symbol:   NATV
 ```
 
-Make sure to make note of the following parameters, **which will vary with each Subnet deployment**:
+From this output, take note of the following parameters, **which will vary with each Subnet deployment**:
 
 | Parameter                      | Value                                      |
 | :----------------------------- | :----------------------------------------- |
@@ -108,7 +108,7 @@ As you deploy the teleporter contracts, keeping track of their addresses will ma
 
 | Parameter                     | Network | Description                                                                                                                                         |
 | :---------------------------- | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Funded Address (with 1000000) | Both    | The address you use to deploy contracts, and send tokens through the bridge. Used as the `teleporterManager` constructor parameter in this example. |
+| Funded Address (with 1000000) | Both    | The public address you use to deploy contracts, and send tokens through the bridge. Used as the `teleporterManager` constructor parameter in this example. |
 | Teleporter Registry           | C-Chain | Address of the TeleporterRegistry contract on C-Chain deployed by the CLI                                                                           |
 | Teleporter Registry           | Subnet  | Address of the TeleporterRegistry contract on Subnet deployed by the CLI                                                                            |
 | Wrapped Native Token          | Subnet  | Address of the wrapped token contract for your Subnet's native token to be deployed on the Subnet                                                   |
