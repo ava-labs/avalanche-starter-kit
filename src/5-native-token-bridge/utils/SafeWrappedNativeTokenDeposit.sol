@@ -5,7 +5,7 @@
 
 pragma solidity 0.8.18;
 
-import {IWrappedNativeToken} from "./interfaces/IWrappedNativeToken.sol";
+import {IWrappedNativeToken} from "../interfaces/IWrappedNativeToken.sol";
 
 /**
  * @dev Provides a wrapper used for calling the {IWrappedNativeToken-deposit} method
