@@ -165,6 +165,14 @@ Note the address the source contract was "Deployed to".
 
 To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _destination_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenDestination`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this destination contract must also inherit the properties of a standard `ERC20` contract.
 
+First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
+
+```zsh
+avalanche subnet describe mysubnet
+```
+
+`Source Blockchain ID` is in the field: `Local Network BlockchainID (HEX)`.
+
 Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Destination.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
 
 ```zsh
@@ -179,12 +187,6 @@ forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20
 - Token Symbol (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
 - Token Decimals (uint8 integer representing number of decimal places for the ERC20 token being created. Most ERC20 tokens follow the Ethereum standard, which defines 18 decimal places.)
 
-To get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
-
-```zsh
-avalanche subnet describe mysubnet
-```
-
 For example, this contract deployment could be entered into your terminal as:
 
 ```zsh
@@ -194,6 +196,14 @@ forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20
 Note the address the source contract was "Deployed to".
 
 ## Bridge the Token Cross-chain
+
+First, get the `Destination Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your local C-Chain, run:
+
+```zsh
+avalanche primary describe
+```
+
+`Destination Blockchain ID` is in the field: `BlockchainID (HEX)`.
 
 Now that all the bridge contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
 
@@ -226,15 +236,15 @@ struct SendTokensInput {
 - destinationBlockchainID: C-Chain Blockchain ID
 - destinationBridgeAddress: ERC20 Destination address
 - recipient: any Ethereum Address you want to send funds to
-- primaryFee: amount of tokens to pay for Teleporter fee on the source chain, can be 0 for this example
 - feeTokenAddress: Wrapped Native Token address
+- primaryFee: amount of tokens to pay for Teleporter fee on the source chain, can be 0 for this example
 - secondaryFee: amount of tokens to pay for Teleporter fee if a multi-hop is needed, can be 0 for this example
 - requiredGasLimit: gas limit requirement for sending to a token bridge, can be 1000 for this example
 
 For example, this token transfer could be entered into your terminal as:
 
 ```zsh
-cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "send((bytes32,address,address,uint256,uint256,uint256))" "(0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241,0x5DB9A7629912EBF95876228C24A848de0bfB43A9,0x2e1A3ebbec1e2e88AB2aeF742E234501845db5D7,0,0,1000)" --value 1
+cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "send((bytes32,address,address,address,uint256,uint256,uint256))" "(0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241,0x5DB9A7629912EBF95876228C24A848de0bfB43A9,0x2e1A3ebbec1e2e88AB2aeF742E234501845db5D7,0x52C84043CD9c865236f11d9Fc9F56aa003c1f9220,0,1000)" --value 1
 ```
 
 If your parameters were entered correctly, this command will sign and publish a transaction, resulting in a large JSON response of transaction information in the terminal.
