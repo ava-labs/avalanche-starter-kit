@@ -239,12 +239,12 @@ struct SendTokensInput {
 - feeTokenAddress: Wrapped Native Token address
 - primaryFee: amount of tokens to pay for Teleporter fee on the source chain, can be 0 for this example
 - secondaryFee: amount of tokens to pay for Teleporter fee if a multi-hop is needed, can be 0 for this example
-- requiredGasLimit: gas limit requirement for sending to a token bridge, can be 1000 for this example
+- requiredGasLimit: gas limit requirement for sending to a token bridge, can be 10000000000000 for this example
 
 For example, this token transfer could be entered into your terminal as:
 
 ```zsh
-cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "send((bytes32,address,address,address,uint256,uint256,uint256))" "(0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241,0x5DB9A7629912EBF95876228C24A848de0bfB43A9,0x2e1A3ebbec1e2e88AB2aeF742E234501845db5D7,0x52C84043CD9c865236f11d9Fc9F56aa003c1f9220,0,1000)" --value 1
+cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "send((bytes32,address,address,address,uint256,uint256,uint256))" "(0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241,0x5DB9A7629912EBF95876228C24A848de0bfB43A9,0x2e1A3ebbec1e2e88AB2aeF742E234501845db5D7,0x52C84043CD9c865236f11d9Fc9F56aa003c1f9220,0,10000000000000)" --value 1
 ```
 
 If your parameters were entered correctly, this command will sign and publish a transaction, resulting in a large JSON response of transaction information in the terminal.
