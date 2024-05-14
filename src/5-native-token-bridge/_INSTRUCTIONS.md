@@ -176,7 +176,14 @@ avalanche subnet describe mysubnet
 Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Destination.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
 
 ```zsh
-forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args <TeleporterRegistry> <TeleporterManager> <SourceBlockchainID> <TokenSourceAddress> <TokenName> <TokenSymbol> <TokenDecimals>
+forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination \
+--constructor-args <TeleporterRegistry> \
+<TeleporterManager> \
+<SourceBlockchainID> \
+<TokenSourceAddress> \
+<TokenName> \
+<TokenSymbol> \
+<TokenDecimals>
 ```
 
 - Teleporter Registry Address **(for C-Chain)**
@@ -190,7 +197,15 @@ forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20
 For example, this contract deployment could be entered into your terminal as:
 
 ```zsh
-forge create --rpc-url local-c --private-key $PK src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0xbcb8143686b1f0c765a1404bb94ad13134cafa5cf56f181a3a990ba21b1151b9 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "Wrapped NATV" "WNATV" 18
+forge create --rpc-url local-c --private-key $PK \
+src/5-native-token-bridge/ERC20Destination.sol:ERC20Destination \
+--constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 \
+0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC \
+0xbcb8143686b1f0c765a1404bb94ad13134cafa5cf56f181a3a990ba21b1151b9 \
+0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 \
+"Wrapped NATV" \
+"WNATV" \
+18
 ```
 
 Note the address the source contract was "Deployed to".
@@ -208,7 +223,11 @@ avalanche primary describe
 Now that all the bridge contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
 
 ```zsh
-cast send --rpc-url mysubnet --private-key $PK <tokenSourceAddress> "<functionToCall((parameterTypes))>" "(<functionParameter0>,<functionParameter1>,...)" --value <amountOfTokensToSend>
+cast send --rpc-url mysubnet --private-key $PK \
+<tokenSourceAddress> \
+"<functionToCall((parameterTypes))>" \
+"(<functionParameter0>,<functionParameter1>,...)" \
+--value <amountOfTokensToSend>
 ```
 
 In line 60 of [`NativeTokenSource`](./NativeTokenSource.sol) is the send function we will call to send the tokens:
@@ -239,12 +258,12 @@ struct SendTokensInput {
 - feeTokenAddress: Wrapped Native Token address
 - primaryFee: amount of tokens to pay for Teleporter fee on the source chain, can be 0 for this example
 - secondaryFee: amount of tokens to pay for Teleporter fee if a multi-hop is needed, can be 0 for this example
-- requiredGasLimit: gas limit requirement for sending to a token bridge, can be 10000000000000 for this example
+- requiredGasLimit: gas limit requirement for sending to a token bridge, can be 1000000 for this example
 
 For example, this token transfer could be entered into your terminal as:
 
 ```zsh
-cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "send((bytes32,address,address,address,uint256,uint256,uint256))" "(0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241,0x5DB9A7629912EBF95876228C24A848de0bfB43A9,0x2e1A3ebbec1e2e88AB2aeF742E234501845db5D7,0x52C84043CD9c865236f11d9Fc9F56aa003c1f9220,0,10000000000000)" --value 1
+cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "send((bytes32,address,address,address,uint256,uint256,uint256))" "(0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241,0x5DB9A7629912EBF95876228C24A848de0bfB43A9,0x2e1A3ebbec1e2e88AB2aeF742E234501845db5D7,0x52C84043CD9c865236f11d9Fc9F56aa003c1f9220,0,0,1000000)" --value 1
 ```
 
 If your parameters were entered correctly, this command will sign and publish a transaction, resulting in a large JSON response of transaction information in the terminal.
