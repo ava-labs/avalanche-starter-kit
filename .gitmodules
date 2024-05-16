@@ -8,3 +8,6 @@
 [submodule "lib/teleporter"]
 	path = lib/teleporter
 	url = https://github.com/ava-labs/teleporter
+[submodule "lib/teleporter-token-bridge"]
+	path = lib/teleporter-token-bridge
+	url = https://github.com/ava-labs/teleporter-token-bridge
