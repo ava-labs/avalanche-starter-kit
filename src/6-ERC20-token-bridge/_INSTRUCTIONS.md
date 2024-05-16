@@ -284,22 +284,44 @@ myTOK ERC20 on mySubnet: 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
 myTOK LocalC on localC: 0x5DB9A7629912EBF95876228C24A848de0bfB43A9
 C-chain ID: 0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241
 Mysubnet ID: 0x3dc877f89665a402a670ff10be64cc30c2088f70d87b5697d89abefa9b4c1d56
-
+MyAddress: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
 
 forge create --rpc-url local-c --private-key $PK src/6-ERC20-token-bridge/ERC20Source.sol:ERC20Source --constructor-args 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x5DB9A7629912EBF95876228C24A848de0bfB43A9
 
-Source Bridge: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
+# SOURCE
+
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/ERC20Source.sol:ERC20Source --constructor-args 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x5DB9A7629912EBF95876228C24A848de0bfB43A9
+
+Source Bridge: 0xA4cD3b0Eb6E5Ab5d8CE4065BcCD70040ADAB1F00
 
 
+# DESTINATION
 
-forge create --rpc-url mysubnet --private-key $PK src/6-ERC20-token-bridge/ERC20Destination.sol:ERC20Destination --constructor-args 0x20c3E9f6f78C6BEF30e2AA5A1278027dfa766817 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241 0x5DB9A7629912EBF95876228C24A848de0bfB43A9 myToken TOK 18
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/ERC20Destination.sol:ERC20Destination --constructor-args 0x20c3E9f6f78C6BEF30e2AA5A1278027dfa766817 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241 0x5DB9A7629912EBF95876228C24A848de0bfB43A9 myToken TOK 18
 
-    constructor(
-        address teleporterRegistryAddress,
-        address teleporterManager,
-        bytes32 sourceBlockchainID_,
-        address tokenSourceAddress_,
-        string memory tokenName,
-        string memory tokenSymbol,
-        uint8 tokenDecimals
-    )
+
+Bridge Destination: 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25
+
+
+# Mint Tokens on C-chain
+cast send --rpc-url local-c --private-key $PK 0x5DB9A7629912EBF95876228C24A848de0bfB43A9 "mint(address, uint256)" 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 100000000000000000000000
+
+# Approve Bridge to spend tokens
+address spender, uint256 amount
+
+cast send --rpc-url local-c --private-key $PK 0x5DB9A7629912EBF95876228C24A848de0bfB43A9 "approve(address, uint256)" 0xA4cD3b0Eb6E5Ab5d8CE4065BcCD70040ADAB1F00 100000000000000000000000
+
+# Register destination on source
+registerWithSource(TeleporterFeeInfo calldata feeInfo)
+cast send --rpc-url mysubnet --private-key $PK 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 "registerWithSource((uint256, address))" "(0x0000000000000000000000000000, 0)"
+
+# Bridge To mysubnet
+cast send --rpc-url local-c --private-key $PK 0xA4cD3b0Eb6E5Ab5d8CE4065BcCD70040ADAB1F00 "addCollateral(bytes32, address, uint256)" 0x3dc877f89665a402a670ff10be64cc30c2088f70d87b5697d89abefa9b4c1d56 0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25 10
+
+addCollateral(bytes32 destinationBlockchainID, address destinationBridgeAddress, uint256 amount)
+
+
+# Check registered destination on source
+registeredDestinations
+
+cast call --rpc-url local-c 0xA4cD3b0Eb6E5Ab5d8CE4065BcCD70040ADAB1F00 "registeredDestinations()(mapping(bytes32 => mapping(address => (bool, uint256, uint256, bool))))" 
