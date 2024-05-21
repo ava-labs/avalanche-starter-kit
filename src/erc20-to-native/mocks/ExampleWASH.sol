@@ -13,10 +13,10 @@ import {Address} from "@openzeppelin/contracts@4.8.1/utils/Address.sol";
  * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
-contract ExampleWAVAX is IWrappedNativeToken, ERC20 {
+contract ExampleWASH is IWrappedNativeToken, ERC20 {
     using Address for address payable;
 
-    constructor() ERC20("Wrapped AVAX", "WAVAX") {}
+    constructor() ERC20("Wrapped ASH", "WASH") {}
 
     receive() external payable {
         deposit();
