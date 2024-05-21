@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts@4/token/ERC721/ERC721.sol";
+import {ERC721} from "@openzeppelin/contracts@4.8.1/token/ERC721/ERC721.sol";
 import "./Ownable.sol";
 
 contract myNFT is ERC721, Ownable {

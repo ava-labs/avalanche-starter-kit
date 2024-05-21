@@ -1,7 +1,7 @@
 pragma solidity 0.8.18;
 
-import "https://github.com/ava-labs/teleporter/blob/main/contracts/src/Teleporter/ITeleporterMessenger.sol";
-import "https://github.com/ava-labs/teleporter/blob/main/contracts/src/Teleporter/ITeleporterReceiver.sol";
+import "@teleporter/ITeleporterMessenger.sol";
+import "@teleporter/ITeleporterReceiver.sol";
 import "./myNFT.sol";
 
 contract NFTMinterReceiverOnDestination is ITeleporterReceiver {
