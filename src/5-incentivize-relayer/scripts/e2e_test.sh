@@ -9,10 +9,6 @@ set -e # Stop on first error
 user_address = 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
 #   c_chain_blockchain_id = 
 mysubnet_blockchain_id = 0x135f18345685851cab136a663eefca628f4974427848ef8f8430b37fbe5c8d09
-#   c_chain_subnet_id
-#   subnet_a_subnet_id
-#   c_chain_rpc_url
-#   subnet_a_subnet_id
 #   c_chain_blockchain_id_hex
 #   subnet_a_blockchain_id_hex
 teleporter_contract_address = 0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf
