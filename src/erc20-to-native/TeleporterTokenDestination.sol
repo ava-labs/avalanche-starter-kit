@@ -149,7 +149,7 @@ abstract contract TeleporterTokenDestination is
      * instance. Destination instances must be registered with their source contract's prior to being able to receive
      * tokens from them.
      */
-    function registerWithSource() external virtual {
+    function registerWithSource(TeleporterFeeInfo calldata feeInfo) external virtual {
         require(!isRegistered, "TeleporterTokenDestination: already registered");
 
         // Send a message to the source token bridge instance to register this destination instance.
@@ -163,11 +163,12 @@ abstract contract TeleporterTokenDestination is
             payload: abi.encode(registerMessage)
         });
 
+        uint256 feeAmount = _handleFees(feeInfo.feeTokenAddress, feeInfo.amount);
         _sendTeleporterMessage(
             TeleporterMessageInput({
                 destinationBlockchainID: sourceBlockchainID,
                 destinationAddress: tokenSourceAddress,
-                feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
+                feeInfo: TeleporterFeeInfo({feeTokenAddress: feeInfo.feeTokenAddress, amount: feeAmount}),
                 requiredGasLimit: REGISTER_DESTINATION_REQUIRED_GAS,
                 allowedRelayerAddresses: new address[](0),
                 message: abi.encode(message)

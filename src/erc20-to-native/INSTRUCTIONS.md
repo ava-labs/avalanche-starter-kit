@@ -30,7 +30,7 @@ APPROVE tokens to be spent by bridge contract on C-chain:
 Now, APPROVE toke to be spent by the bridge contract: cast send --rpc-url local-c --private-key $PK 0x5DB9A7629912EBF95876228C24A848de0bfB43A9 "approve(address, uint256)" 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D 2000000000000000000000
 
 
-register with source (add details here): cast send --rpc-url mysubnet --private-key $PK 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 "registerWithSource(address, uint256)" 0x0000000000000000000000000000000000000000 0 
+register with source (add details here): cast send --rpc-url mysubnet --private-key $PK 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 "registerWithSource((address, uint256))" "(0x0000000000000000000000000000000000000000,0)" 
 
 Add Collateral (make sure to update destination blockchain ID):
 cast send --rpc-url local-c --private-key $PK 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D "addCollateral(bytes32, address, uint256)" 0x108ce15038973062d8628fd20c8c657effe993dd8324297353e350dfc05dacad 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 700

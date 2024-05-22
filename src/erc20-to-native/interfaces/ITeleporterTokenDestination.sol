@@ -34,5 +34,5 @@ struct TeleporterTokenDestinationSettings {
  * for burning that token to redeem the backing asset on the source chain, or briding to other destinations.
  */
 interface ITeleporterTokenDestination is ITeleporterTokenBridge {
-    function registerWithSource() external;
+    function registerWithSource(TeleporterFeeInfo calldata feeInfo) external;
 }
