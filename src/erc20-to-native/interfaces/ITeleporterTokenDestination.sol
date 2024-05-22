@@ -34,9 +34,5 @@ struct TeleporterTokenDestinationSettings {
  * for burning that token to redeem the backing asset on the source chain, or briding to other destinations.
  */
 interface ITeleporterTokenDestination is ITeleporterTokenBridge {
-    /**
-     * @notice Sends a Teleporter message to register the destination instance with its configured source.
-     * @param feeInfo The fee asset and amount for the Teleporter message
-     */
-    function registerWithSource(TeleporterFeeInfo calldata feeInfo) external;
+    function registerWithSource() external;
 }
