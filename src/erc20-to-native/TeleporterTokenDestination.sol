@@ -154,9 +154,9 @@ abstract contract TeleporterTokenDestination is
 
         // Send a message to the source token bridge instance to register this destination instance.
         RegisterDestinationMessage memory registerMessage = RegisterDestinationMessage({
-            initialReserveImbalance: 700,
-            tokenMultiplier: 18,
-            multiplyOnDestination: true
+            initialReserveImbalance: initialReserveImbalance,
+            tokenMultiplier: tokenMultiplier,
+            multiplyOnDestination: multiplyOnDestination
         });
         BridgeMessage memory message = BridgeMessage({
             messageType: BridgeMessageType.REGISTER_DESTINATION,

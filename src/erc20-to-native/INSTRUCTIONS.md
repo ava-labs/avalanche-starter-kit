@@ -33,10 +33,10 @@ Now, APPROVE toke to be spent by the bridge contract: cast send --rpc-url local-
 register with source (add details here): cast send --rpc-url mysubnet --private-key $PK 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 "registerWithSource((address, uint256))" "(0x0000000000000000000000000000000000000000,0)" 
 
 Add Collateral (make sure to update destination blockchain ID):
-cast send --rpc-url local-c --private-key $PK 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D "addCollateral(bytes32, address, uint256)" 0x108ce15038973062d8628fd20c8c657effe993dd8324297353e350dfc05dacad 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 700
+cast send --rpc-url local-c --private-key $PK 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D "addCollateral(bytes32, address, uint256)" 0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6f9f0ae722dcc1e42f0 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922 700
 
 Send the tokens:
-now teleport the tokens: cast send --rpc-url local-c --private-key $PK 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(0x5db6f3da2bbe7199427400cf4dad6fb1af47a1e184168b0f50930e3535f5f133, 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922, 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC, 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000
+now teleport the tokens: cast send --rpc-url local-c --private-key $PK 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6f9f0ae722dcc1e42f0, 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922, 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC, 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000
 
 check balance of ASH tokens: cast balance --rpc-url mysubnet 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
 
