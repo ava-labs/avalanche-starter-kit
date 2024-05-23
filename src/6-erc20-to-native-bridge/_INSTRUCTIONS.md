@@ -226,7 +226,7 @@ cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "approve(add
 
 Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values are mentioned in wei)
 
-```
+```bash
 cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "addCollateral(bytes32, address, uint256)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET 700000000000000000000
 ```
 
@@ -254,6 +254,6 @@ cast balance --rpc-url mysubnet $FUNDED_ADDRESS
 
 You can also confirm whether the bridge is collateralized now by running the below command:
 
-```
+```bash
 cast call --rpc-url mysubnet $NATIVE_TOKEN_DESTINATION_SUBNET "isCollateralized()(bool)"
 ```
