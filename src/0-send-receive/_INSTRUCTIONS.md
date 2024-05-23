@@ -43,7 +43,6 @@ forge create --rpc-url local-c --private-key $PK src/0-send-receive/senderOnCCha
 
 ```bash
 forge create --rpc-url mysubnet --private-key $PK src/0-send-receive/receiverOnSubnet.sol:ReceiverOnSubnet
-
 ```
 
 ### Sending a Message
