@@ -13,7 +13,10 @@
 		"KEYSTORE": "${containerWorkspaceFolder}/keystore"
 	},
 	"postCreateCommand": {
-		"git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
+		"init-git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule init"
+	},
+	"postStartCommand": {
+		"update-git-submodules": "git submodule update --recursive"
 	},
 	"forwardPorts": [
 		9650,
