@@ -122,7 +122,7 @@ First step is to deploy the ERC20 contract. We are using OZs example contract he
 _[WASH = Wrapped ASH]_
 
 ```bash
-forge create --rpc-url local-c --private-key $PK src/erc20-to-native/mocks/ExampleWASH.sol:ExampleWASH
+forge create --rpc-url local-c --private-key $PK src/6-erc20-to-native-bridge/ExampleWASH.sol:ExampleWASH
 ```
 
 Now, make sure to add the contract address in the environment variables. 
@@ -137,7 +137,7 @@ We will deploy two bridge contracts. One of the source chain (which is C-chain i
 ### ERC20Source Contract
 
 ```bash
-forge create --rpc-url local-c --private-key $PK src/erc20-to-native/ERC20Source.sol:ERC20Source --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_ORIGIN_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/ERC20Source.sol:ERC20Source --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_ORIGIN_C_CHAIN
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -159,7 +159,7 @@ export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6
 Now, deploy the bridge contract on mysubnet.
 
 ```bash
-forge create --rpc-url mysubnet --private-key $PK src/erc20-to-native/NativeTokenDestination.sol:NativeTokenDestination --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_ORIGIN_BRIDGE_C_CHAIN})" "ASH" 700000000000000000000 0 false 0
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenDestination.sol:NativeTokenDestination --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_ORIGIN_BRIDGE_C_CHAIN})" "ASH" 700000000000000000000 0 false 0
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -206,7 +206,7 @@ So the course of action in this section would be:
 
 ### Mint Example WASH Tokens on C-chain
 
-You can mint tokens as per your requirements here. (All values on source side are mentioned in wei)
+You can mint tokens as per your requirements here. (All values are mentioned in wei)
 
 _Note: In case you have an external token contract (BOK BOK COQ), you will not mint them like we're doing in this command. Make sure you have enough tokens in your funded address to proceed with the transaction._
 
@@ -216,7 +216,7 @@ cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "deposit()" 
 
 ### Approve tokens for the Source bridge contract
 
-You can increase/decrease the numbers here as per your requirements. (All values on source side are mentioned in wei)
+You can increase/decrease the numbers here as per your requirements. (All values are mentioned in wei)
 
 ```bash
 cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "approve(address, uint256)" $ERC20_ORIGIN_BRIDGE_C_CHAIN 2000000000000000000000
@@ -224,7 +224,7 @@ cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "approve(add
 
 ### Add Collateral
 
-Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values on source side are mentioned in wei)
+Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values are mentioned in wei)
 
 ```
 cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "addCollateral(bytes32, address, uint256)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET 700000000000000000000
@@ -232,11 +232,28 @@ cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "addC
 
 ### Send Tokens Cross Chain
 
+Now, send 1000 WASH tokens to the destination chain on your funded address. (All values are mentioned in wei)
+
 ```bash
 cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_DESTINATION_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_ORIGIN_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
 ```
 
-### Check if successful
+## Check Balances
+
+Now is the time for truth. You will receive errors along the way if anything is incorrect. Make sure you fix them according to the guide above. If you did everything as described, you'll see that the balance of ERC20 token on C-chain for your funded address has decreased
+
+```bash
+cast call --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "balanceOf(address)" $FUNDED_ADDRESS
 ```
+
+You'll also see that on the destination subnet (mysubnet), you have increased balance now. If you put the new balance in https://eth-converter.com/, you'll see that the balance increased exactly by 1000 tokens. This balance is also in Wei and when you put this value in the converter, you'll get ~1088 tokens.
+
+```bash
 cast balance --rpc-url mysubnet $FUNDED_ADDRESS
+```
+
+You can also confirm whether the bridge is collateralized now by running the below command:
+
+```
+cast call --rpc-url mysubnet $NATIVE_TOKEN_DESTINATION_SUBNET "isCollateralized()(bool)"
 ```
