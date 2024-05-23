@@ -117,17 +117,21 @@ export TELEPORTER_REGISTRY_SUBNET=<Teleporter Registry on Subnet>
 
 ## Deploy ERC20 Contract on C-chain
 
-First step is to deploy the ERC20 contract. We are using OZs example contract here and the contract is renamed to `ExampleWASH` for convenience. You can use any other pre deployed ERC20 contract or change the names according to your Subnet native token as well.
-
-_[WASH = Wrapped ASH]_
+First step is to deploy the ERC20 contract. We are using OZs example contract here and the contract is renamed to `ERC20.sol` for convenience. You can use any other pre deployed ERC20 contract or change the names according to your Subnet native token as well.
 
 ```bash
-forge create --rpc-url local-c --private-key $PK src/6-erc20-to-native-bridge/ExampleWASH.sol:ExampleWASH
+forge create --rpc-url local-c --private-key $PK src/6-erc20-to-native-bridge/ERC20.sol:BOK
 ```
 
 Now, make sure to add the contract address in the environment variables. 
 ```bash
 export ERC20_ORIGIN_C_CHAIN=<"Deployed to" address>
+```
+
+If you deployed the above example contract, you should see a balance of 100,000 tokens when you run the below command:
+
+```bash
+cast call --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "balanceOf(address)" $FUNDED_ADDRESS
 ```
 
 ## Deploy Bridge Contracts
@@ -199,20 +203,9 @@ cast call --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "regi
 If you followed the instructions correctly, you should have noticed that we minted a supply of 700 ASH tokens on our Subnet. This increases the total supply of ASH token and its wrapped counterparts. We first need to collateralize the bridge by sending an amount equivalent to `initialReserveImbalance` to the destination subnet from the C-chain. Note that this amount will not be minted on the mysubnet so we recommend sending exactly an amount equal to `initialReserveImbalance`.
 
 So the course of action in this section would be:
-- Mint 5000 Example WASH Tokens on C-chain
 - Approve 2000 tokens for the Source bridge contract to use them
 - Call the `addCollateral` method on Source bridge contract and send 700 tokens to the destination bridge contract
 - Send 1000 tokens to your address on the Subnet and check your new balance
-
-### Mint Example WASH Tokens on C-chain
-
-You can mint tokens as per your requirements here. (All values are mentioned in wei)
-
-_Note: In case you have an external token contract (BOK BOK COQ), you will not mint them like we're doing in this command. Make sure you have enough tokens in your funded address to proceed with the transaction._
-
-```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "deposit()" --value 5000000000000000000000
-```
 
 ### Approve tokens for the Source bridge contract
 
@@ -240,13 +233,9 @@ cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "send
 
 ## Check Balances
 
-Now is the time for truth. You will receive errors along the way if anything is incorrect. Make sure you fix them according to the guide above. If you did everything as described, you'll see that the balance of ERC20 token on C-chain for your funded address has decreased
+Now is the time for truth. You will receive errors along the way if anything is incorrect. Make sure you fix them according to the guide above.
 
-```bash
-cast call --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "balanceOf(address)" $FUNDED_ADDRESS
-```
-
-You'll also see that on the destination subnet (mysubnet), you have increased balance now. If you put the new balance in https://eth-converter.com/, you'll see that the balance increased exactly by 1000 tokens. This balance is also in Wei and when you put this value in the converter, you'll get ~1088 tokens.
+If you did everything as described, you'll see that on the destination subnet (mysubnet), you have increased balance now. If you put the new balance in https://eth-converter.com/, you'll see that the balance increased exactly by 1000 tokens. This balance is also in Wei and when you put this value in the converter, you'll get ~1088 tokens.
 
 ```bash
 cast balance --rpc-url mysubnet $FUNDED_ADDRESS
