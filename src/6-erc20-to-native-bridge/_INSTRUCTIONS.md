@@ -188,7 +188,7 @@ cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET 
 
 ### Check if Destination Bridge is Registered with the Source Bridge
 
-_Note: This command results in "execution reverted" error. Needs to be fixed.
+_Note: This command results in "execution reverted" error. Needs to be fixed._
 
 ```bash
 cast call --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "registeredDestination(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET
