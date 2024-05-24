@@ -49,11 +49,11 @@ creating genesis for subnet mysubnet
 Enter your subnet's ChainId. It can be any positive integer.
 ChainId: 123
 Select a symbol for your subnet's native token
-Token symbol: DEST
+Token symbol: NATV
 ✔ Low disk use    / Low Throughput    1.5 mil gas/s (C-Chain's setting)
 ✔ Customize your airdrop
 Address to airdrop to: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
-Amount to airdrop (in ASH units): 100
+Amount to airdrop (in NATV units): 100
 ✔ No
 ✔ Yes
 ✔ Native Minting
@@ -99,7 +99,7 @@ Funded address:    0x834E891749c29d1417f4501B72945B72224d10dB with 600 (10^18)
 Funded address:    0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC with 100 (10^18) - private key: 56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027
 Network name:      mysubnet
 Chain ID:          123
-Currency Symbol:   ASH
+Currency Symbol:   NATV
 ```
 
 From this output, take note of the following parameters
@@ -138,7 +138,7 @@ Transaction hash: 0x054e7b46b221c30f400b81df0fa2601668ae832054cf8e8b873f4ba615fa
 
 Export the "Deployed to" address as an environment variables.
 ```bash
-export WRAPPED_NATIV_C_CHAIN=<"Deployed to" address>
+export WRAPPED_NATIVE_C_CHAIN=<"Deployed to" address>
 ```
 
 
@@ -150,7 +150,7 @@ To bridge the token out of your Subnet, you'll need to first deploy a _source_ c
 Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenSource.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
 
 ```zsh
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenSource.sol:NativeTokenSource --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $WRAPPED_NATIV_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenSource.sol:NativeTokenSource --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $WRAPPED_NATIVE_C_CHAIN
 ```
 
 ```
@@ -177,7 +177,7 @@ export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6
 Now, deploy the bridge contract on mysubnet.
 
 ```bash
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenDestination.sol:NativeTokenDestination --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIV_ORIGIN_BRIDGE_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenDestination.sol:NativeTokenDestination --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIVE_ORIGIN_BRIDGE_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -209,7 +209,7 @@ cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET 
 _Note: This command results in "execution reverted" error. Needs to be fixed._
 
 ```bash
-cast call --rpc-url local-c --private-key $PK $NATIV_ORIGIN_BRIDGE_C_CHAIN "registeredDestination(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET
+cast call --rpc-url local-c --private-key $PK $NATIVE_ORIGIN_BRIDGE_C_CHAIN "registeredDestination(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET
 ```
 
 ## Add Collateral and Start Sending Tokens
