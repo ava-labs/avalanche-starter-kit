@@ -32,7 +32,7 @@ contract CalculatorReceiverOnSubnet is ITeleporterReceiver {
             (string memory text1, string memory text2) = abi.decode(paramsData, (string, string));
             _calculatorConcatenateStrings(text1, text2);
         } else {
-            revert("ReceiverOnAmsterdam: invalid action");
+            revert("CalculatorReceiverOnSubnet: invalid action");
         }
     }
 

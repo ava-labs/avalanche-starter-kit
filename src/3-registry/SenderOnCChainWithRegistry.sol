@@ -27,7 +27,7 @@ contract SenderOnCChain {
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 100000,
                 allowedRelayerAddresses: new address[](0),
-                message: abi.encode(message, 16, true)
+                message: abi.encode(message)
             })
         );
     }
