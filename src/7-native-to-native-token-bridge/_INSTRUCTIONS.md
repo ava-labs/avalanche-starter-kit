@@ -15,7 +15,7 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 1. Create a Subnet and Deploy on Local Network
 2. Wrap Native Token on C-Chain
 3. Deploy the Bridge Contracts on C-chain and Subnet
-4. Granting Native Minting Rights to NativeTokenDestination
+4. Granting Native Minting Rights to NativeTokenSpoke
 5. Register Destination Bridge with Source Bridge
 6. Add Collateral and Start Sending Tokens
 7. Check Balances
@@ -143,14 +143,14 @@ export WRAPPED_NATIVE_C_CHAIN=<"Deployed to" address>
 
 
 
-### Native Token Source
+### Native Token Hub
 
-To bridge the token out of your Subnet, you'll need to first deploy a _source_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenSource` contract standard.
+To bridge the token out of your Subnet, you'll need to first deploy a _source_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenHub` contract standard.
 
-Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenSource.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenHub.sol](./NativeTokenHub.sol) contract, passing in the following constructor arguments:
 
 ```zsh
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenSource.sol:NativeTokenSource --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $WRAPPED_NATIVE_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/NativeTokenHub.sol:NativeTokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $WRAPPED_NATIVE_C_CHAIN
 ```
 
 ```
@@ -161,7 +161,7 @@ Export the "Deployed to" address as an environment variables.
 export NATIVE_ORIGIN_BRIDGE_C_CHAIN=<"Deployed to" address>
 ```
 
-### NativeTokenDestination Contract
+### NativeTokenSpoke Contract
 
 In order to deploy this contract, we'll need the source chain BlockchainID (in hex). For Local network, you can easily find the BlockchainID using the `avalanche primary describe` command. Make sure you add it in the environment variables.
 
@@ -177,7 +177,7 @@ export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6
 Now, deploy the bridge contract on mysubnet.
 
 ```bash
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenDestination.sol:NativeTokenDestination --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIVE_ORIGIN_BRIDGE_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/NativeTokenSpoke.sol:NativeTokenSpoke --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIVE_ORIGIN_BRIDGE_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -185,9 +185,9 @@ Export the "Deployed to" address as an environment variables.
 export NATIVE_TOKEN_DESTINATION_SUBNET=<"Deployed to" address>
 ```
 
-### Granting Native Minting Rights to NativeTokenDestination Contract
+### Granting Native Minting Rights to NativeTokenSpoke Contract
 
-In order to mint native tokens on Subnet when received from the C-chain, the NativeTokenDestination contract must have minting rights. We pre-initialized the Native Minter Precompile with an admin address owned by us. We can use our rights to add this contract address as one of the enabled addresses in the precompile.
+In order to mint native tokens on Subnet when received from the C-chain, the NativeTokenSpoke contract must have minting rights. We pre-initialized the Native Minter Precompile with an admin address owned by us. We can use our rights to add this contract address as one of the enabled addresses in the precompile.
 
 _Note: Native Minter Precompile Address = 0x0200000000000000000000000000000000000001_
 
@@ -198,10 +198,10 @@ cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000
 
 ## Register Destination Bridge with Source Bridge
 
-After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithSource` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET "registerWithSource((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
+cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
 ### Check if Destination Bridge is Registered with the Source Bridge

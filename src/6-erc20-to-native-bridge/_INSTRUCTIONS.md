@@ -141,7 +141,7 @@ We will deploy two bridge contracts. One of the source chain (which is C-chain i
 ### ERC20Source Contract
 
 ```bash
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/ERC20Source.sol:ERC20Source --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_ORIGIN_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_ORIGIN_C_CHAIN
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -149,7 +149,7 @@ Export the "Deployed to" address as an environment variables.
 export ERC20_ORIGIN_BRIDGE_C_CHAIN=<"Deployed to" address>
 ```
 
-### NativeTokenDestination Contract
+### NativeTokenSpoke Contract
 
 In order to deploy this contract, we'll need the source chain BlockchainID (in hex). For Local network, you can easily find the BlockchainID using the `avalanche primary describe` command. Make sure you add it in the environment variables.
 
@@ -163,7 +163,7 @@ export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6
 Now, deploy the bridge contract on mysubnet.
 
 ```bash
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenDestination.sol:NativeTokenDestination --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_ORIGIN_BRIDGE_C_CHAIN})" "ASH" 700000000000000000000 0 false 0
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/NativeTokenSpoke.sol:NativeTokenSpoke --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_ORIGIN_BRIDGE_C_CHAIN})" "ASH" 700000000000000000000 0 false 0
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -171,9 +171,9 @@ Export the "Deployed to" address as an environment variables.
 export NATIVE_TOKEN_DESTINATION_SUBNET=<"Deployed to" address>
 ```
 
-### Granting Native Minting Rights to NativeTokenDestination Contract
+### Granting Native Minting Rights to NativeTokenSpoke Contract
 
-In order to mint native tokens on Subnet when received from the C-chain, the NativeTokenDestination contract must have minting rights. We pre-initialized the Native Minter Precompile with an admin address owned by us. We can use our rights to add this contract address as one of the enabled addresses in the precompile.
+In order to mint native tokens on Subnet when received from the C-chain, the NativeTokenSpoke contract must have minting rights. We pre-initialized the Native Minter Precompile with an admin address owned by us. We can use our rights to add this contract address as one of the enabled addresses in the precompile.
 
 _Note: Native Minter Precompile Address = 0x0200000000000000000000000000000000000001_
 
@@ -184,10 +184,10 @@ cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000
 
 ## Register Destination Bridge with Source Bridge
 
-After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithSource` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET "registerWithSource((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
+cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
 ### Check if Destination Bridge is Registered with the Source Bridge

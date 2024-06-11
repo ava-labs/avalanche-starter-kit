@@ -142,7 +142,7 @@ We will deploy two bridge contracts. One of the source chain (which is C-chain i
 ### ERC20Source Contract
 
 ```bash
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/ERC20Source.sol:ERC20Source --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_ORIGIN_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_ORIGIN_C_CHAIN
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -152,7 +152,7 @@ export ERC20_ORIGIN_BRIDGE_C_CHAIN=<"Deployed to" address>
 
 ### ERC20 Destination
 
-To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _destination_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenDestination`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this destination contract must also inherit the properties of a standard `ERC20` contract.
+To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _destination_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenSpoke`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this destination contract must also inherit the properties of a standard `ERC20` contract.
 
 First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
 
@@ -179,20 +179,20 @@ export C_CHAIN_BLOCKCHAIN_ID_HEX=0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f3
 ```
 
 
-Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Destination.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Destination.sol](./NativeTokenHub.sol) contract, passing in the following constructor arguments:
 
 
 
 - Teleporter Registry Address **(for C-Chain)**
 - Teleporter Manager (our funded address)
 - Source Blockchain ID (hexidecimal representation of our Subnet's Blockchain ID)
-- Token Source Address (address of NativeTokenSource.sol deployed on Subnet in the last step)
+- Token Hub Address (address of NativeTokenHub.sol deployed on Subnet in the last step)
 - Token Name (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
 - Token Symbol (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
 - Token Decimals (uint8 integer representing number of decimal places for the ERC20 token being created. Most ERC20 tokens follow the Ethereum standard, which defines 18 decimal places.)
 
 ```zsh
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/ERC20Destination.sol:ERC20Destination \
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/ERC20TokenSpoke.sol:ERC20TokenSpoke \
 --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_ORIGIN_BRIDGE_C_CHAIN})" "TOK" "TOK" 18
 ```
 
@@ -202,10 +202,10 @@ export ERC20_TOKEN_DESTINATION_SUBNET=<"Deployed to" address>
 
 ## Register Destination Bridge with Source Bridge
 
-After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithSource` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $ERC20_TOKEN_DESTINATION_SUBNET "registerWithSource((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
+cast send --rpc-url mysubnet --private-key $PK $ERC20_TOKEN_DESTINATION_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
 
