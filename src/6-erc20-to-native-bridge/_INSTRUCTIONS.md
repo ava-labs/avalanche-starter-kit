@@ -125,13 +125,13 @@ forge create --rpc-url local-c --private-key $PK src/6-erc20-to-native-bridge/ER
 
 Now, make sure to add the contract address in the environment variables. 
 ```bash
-export ERC20_ORIGIN_C_CHAIN=<"Deployed to" address>
+export ERC20_HUB_C_CHAIN=<"Deployed to" address>
 ```
 
 If you deployed the above example contract, you should see a balance of 100,000 tokens when you run the below command:
 
 ```bash
-cast call --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "balanceOf(address)" $FUNDED_ADDRESS
+cast call --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "balanceOf(address)" $FUNDED_ADDRESS
 ```
 
 ## Deploy Bridge Contracts
@@ -141,12 +141,12 @@ We will deploy two bridge contracts. One of the source chain (which is C-chain i
 ### ERC20Source Contract
 
 ```bash
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_ORIGIN_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HUB_C_CHAIN
 ```
 
 Export the "Deployed to" address as an environment variables.
 ```bash
-export ERC20_ORIGIN_BRIDGE_C_CHAIN=<"Deployed to" address>
+export ERC20_HUB_BRIDGE_C_CHAIN=<"Deployed to" address>
 ```
 
 ### NativeTokenSpoke Contract
@@ -163,12 +163,12 @@ export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6
 Now, deploy the bridge contract on mysubnet.
 
 ```bash
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/NativeTokenSpoke.sol:NativeTokenSpoke --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_ORIGIN_BRIDGE_C_CHAIN})" "ASH" 700000000000000000000 0 false 0
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/NativeTokenSpoke.sol:NativeTokenSpoke --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_HUB_BRIDGE_C_CHAIN})" "ASH" 700000000000000000000 0 false 0
 ```
 
 Export the "Deployed to" address as an environment variables.
 ```bash
-export NATIVE_TOKEN_DESTINATION_SUBNET=<"Deployed to" address>
+export NATIVE_TOKEN_SPOKE_SUBNET=<"Deployed to" address>
 ```
 
 ### Granting Native Minting Rights to NativeTokenSpoke Contract
@@ -179,7 +179,7 @@ _Note: Native Minter Precompile Address = 0x020000000000000000000000000000000000
 
 Sending below transaction will add our destination bridge contract as one of the enabled addresses.
 ```bash
-cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000000000001 "setEnabled(address)" $NATIVE_TOKEN_DESTINATION_SUBNET
+cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000000000001 "setEnabled(address)" $NATIVE_TOKEN_SPOKE_SUBNET
 ```
 
 ## Register Destination Bridge with Source Bridge
@@ -187,7 +187,7 @@ cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000
 After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
+cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_SPOKE_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
 ### Check if Destination Bridge is Registered with the Source Bridge
@@ -195,7 +195,7 @@ cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET 
 _Note: This command results in "execution reverted" error. Needs to be fixed._
 
 ```bash
-cast call --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "registeredDestination(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET
+cast call --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "registeredDestination(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_SPOKE_SUBNET
 ```
 
 ## Add Collateral and Start Sending Tokens
@@ -212,7 +212,7 @@ So the course of action in this section would be:
 You can increase/decrease the numbers here as per your requirements. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "approve(address, uint256)" $ERC20_ORIGIN_BRIDGE_C_CHAIN 2000000000000000000000
+cast send --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "approve(address, uint256)" $ERC20_HUB_BRIDGE_C_CHAIN 2000000000000000000000
 ```
 
 ### Add Collateral
@@ -220,7 +220,7 @@ cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_C_CHAIN "approve(add
 Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "addCollateral(bytes32, address, uint256)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET 700000000000000000000
+cast send --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "addCollateral(bytes32, address, uint256)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_SPOKE_SUBNET 700000000000000000000
 ```
 
 ### Send Tokens Cross Chain
@@ -228,7 +228,7 @@ cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "addC
 Now, send 1000 WASH tokens to the destination chain on your funded address. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_ORIGIN_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_DESTINATION_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_ORIGIN_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
+cast send --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_SPOKE_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_HUB_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
 ```
 
 ## Check Balances
@@ -244,5 +244,5 @@ cast balance --rpc-url mysubnet $FUNDED_ADDRESS
 You can also confirm whether the bridge is collateralized now by running the below command:
 
 ```bash
-cast call --rpc-url mysubnet $NATIVE_TOKEN_DESTINATION_SUBNET "isCollateralized()(bool)"
+cast call --rpc-url mysubnet $NATIVE_TOKEN_SPOKE_SUBNET "isCollateralized()(bool)"
 ```
