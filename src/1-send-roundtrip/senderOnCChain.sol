@@ -6,11 +6,12 @@
 pragma solidity ^0.8.18;
 
 import "@teleporter/ITeleporterMessenger.sol";
+import "@teleporter/ITeleporterReceiver.sol";
 
-contract SenderOnCChain {
+contract SenderOnCChain is ITeleporterReceiver {
     ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
 
-    string public rountripMessage;
+    string public roundtripMessage;
 
     /**
      * @dev Sends a message to another chain.
@@ -34,6 +35,6 @@ contract SenderOnCChain {
         require(msg.sender == address(messenger), "SenderOnCChain: unauthorized TeleporterMessenger");
 
         // Store the message.
-        rountripMessage = abi.decode(message, (string));
+        roundtripMessage = abi.decode(message, (string));
     }
 }
