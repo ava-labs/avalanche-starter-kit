@@ -16,7 +16,7 @@ contract CalculatorSenderOnCChain {
         teleporterMessenger.sendCrossChainMessage(
             TeleporterMessageInput({
                 // Replace with chain id of your Subnet (see instructions in Readme)
-                destinationBlockchainID: 0x92756d698399805f0088fc07fc42af47c67e1d38c576667ac6c7031b8df05293,
+                destinationBlockchainID: 0x3861e061737eaeb8d00f0514d210ad1062bfacdb4bd22d1d1f5ef876ae3a8921,
                 destinationAddress: destinationAddress,
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 100000,
@@ -29,7 +29,8 @@ contract CalculatorSenderOnCChain {
     function sendConcatenateMessage(address destinationAddress, string memory text1, string memory text2) external {
         teleporterMessenger.sendCrossChainMessage(
             TeleporterMessageInput({
-                destinationBlockchainID: 0x382d2a20c299b03b638dd4d42b96e7401f6c3e88209b764abce83cf71c0c30cd,
+                // Replace with chain id of your Subnet (see instructions in Readme)
+                destinationBlockchainID: 0x3861e061737eaeb8d00f0514d210ad1062bfacdb4bd22d1d1f5ef876ae3a8921,
                 destinationAddress: destinationAddress,
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 100000,
