@@ -141,7 +141,7 @@ We will deploy two bridge contracts. One of the source chain (which is C-chain i
 ### ERC20Hub Contract
 
 ```bash
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HUB_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HUB_C_CHAIN 18
 ```
 
 Export the "Deployed to" address as an environment variables.
