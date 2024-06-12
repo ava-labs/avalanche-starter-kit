@@ -95,7 +95,7 @@ contract ERC721Bridge is IERC721Bridge, TeleporterOwnerUpgradeable, IERC721Recei
             revert InvalidDestinationBlockchainId();
         }
 
-        // Neither the recipient, nor the NFT contract, nor the destination bridge can be the zero address.
+        // Neither the recipient, nor the NFT contract, nor the Spoke Bridge can be the zero address.
         if (tokenContractAddress == address(0)) {
             revert ZeroTokenContractAddress();
         }
@@ -489,7 +489,7 @@ contract ERC721Bridge is IERC721Bridge, TeleporterOwnerUpgradeable, IERC721Recei
             revert InvalidDestinationBlockchainId();
         }
 
-        // Neither the recipient, nor the NFT contract, nor the destination bridge can be the zero address.
+        // Neither the recipient, nor the NFT contract, nor the Spoke Bridge can be the zero address.
         if (transferData.nativeContractAddress == address(0)) {
             revert ZeroTokenContractAddress();
         }

@@ -1,6 +1,6 @@
-# Bridge an ERC20 Token &rarr; Subnet as Native Token
+# Bridge an ERC20 Token to a Subnet as an ERC20 Token
 
-The following example will show you how to send an ERC20 Token on C-chain to a Subnet as a native token using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
+The following example will show you how to send an ERC20 Token on C-chain to a Subnet as an ERC20 token using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
 **All token bridge contracts and interfaces implemented in this example implementation are maintained in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/contracts/src) repository.**
 
@@ -16,7 +16,8 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 2. Deploy an ERC20 Contract on C-chain
 3. Deploy the Bridge Contracts on C-chain and Subnet
 4. Register Spoke Bridge with Hub Bridge
-5. Add Collateral and Start Sending Tokens
+5. Approve Transaction
+6. Start Sending Tokens
 
 ## Local Network Environment
 
@@ -47,7 +48,7 @@ creating genesis for subnet mysubnet
 Enter your subnet's ChainId. It can be any positive integer.
 ChainId: 123
 Select a symbol for your subnet's native token
-Token symbol: ASH
+Token symbol: TOK
 ✔ Low disk use    / Low Throughput    1.5 mil gas/s (C-Chain's setting)
 ✔ Customize your airdrop
 Address to airdrop to: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
@@ -99,7 +100,7 @@ Funded address:    0x834E891749c29d1417f4501B72945B72224d10dB with 600 (10^18)
 Funded address:    0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC with 100 (10^18) - private key: 56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027
 Network name:      mysubnet
 Chain ID:          123
-Currency Symbol:   ASH
+Currency Symbol:   TOK
 ```
 
 From this output, take note of the following parameters
@@ -120,7 +121,7 @@ export TELEPORTER_REGISTRY_SUBNET=<Teleporter Registry on Subnet>
 First step is to deploy the ERC20 contract. We are using OZs example contract here and the contract is renamed to `ERC20.sol` for convenience. You can use any other pre deployed ERC20 contract or change the names according to your Subnet native token as well.
 
 ```bash
-forge create --rpc-url local-c --private-key $PK src/6-erc20-to-native-bridge/ERC20.sol:BOK
+forge create --rpc-url local-c --private-key $PK src/8-erc20-to-erc20-token-bridge/ERC20.sol:TOK
 ```
 
 Now, make sure to add the contract address in the environment variables. 
@@ -149,65 +150,66 @@ Export the "Deployed to" address as an environment variables.
 export ERC20_HUB_BRIDGE_C_CHAIN=<"Deployed to" address>
 ```
 
-### NativeTokenSpoke Contract
+### ERC20 Spoke
 
-In order to deploy this contract, we'll need the source chain BlockchainID (in hex). For Local network, you can easily find the BlockchainID using the `avalanche primary describe` command. Make sure you add it in the environment variables.
+To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _spoke_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenSpoke`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this spoke contract must also inherit the properties of a standard `ERC20` contract.
 
-It's also recommended that you set the BlockchainID for mysubnet in order to avoid any issues later. It can be found using the `avalanche subnet describe <subnet-name>` command.
+First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
+
+```zsh
+avalanche subnet describe mysubnet
+```
+
+```bash
+export SUBNET_BLOCKCHAIN_ID_HEX=0x4d569bf60a38e3ab3e92afd016fe37f7060d7d63c44e3378f42775bf82a7642d
+```
+
+`Source Blockchain ID` is in the field: `Local Network BlockchainID (HEX)`.
+
+Do the same for the C-Chain:
+
+```zsh
+avalanche primary describe
+```
+
+`Destination Blockchain ID` is in the field: `BlockchainID (HEX)`.
 
 ```bash
 export C_CHAIN_BLOCKCHAIN_ID_HEX=0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241
-export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6f9f0ae722dcc1e42f0
 ```
 
-Now, deploy the bridge contract on mysubnet.
 
-```bash
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/NativeTokenSpoke.sol:NativeTokenSpoke --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_HUB_BRIDGE_C_CHAIN})" "ASH" 700000000000000000000 0 false 0
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Spoke.sol](./NativeTokenHub.sol) contract, passing in the following constructor arguments:
+
+
+
+- Teleporter Registry Address **(for C-Chain)**
+- Teleporter Manager (our funded address)
+- Source Blockchain ID (hexidecimal representation of our Subnet's Blockchain ID)
+- Token Hub Address (address of NativeTokenHub.sol deployed on Subnet in the last step)
+- Token Name (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
+- Token Symbol (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
+- Token Decimals (uint8 integer representing number of decimal places for the ERC20 token being created. Most ERC20 tokens follow the Ethereum standard, which defines 18 decimal places.)
+
+```zsh
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/ERC20TokenSpoke.sol:ERC20TokenSpoke \
+--constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_HUB_BRIDGE_C_CHAIN})" "TOK" "TOK" 18
 ```
 
-Export the "Deployed to" address as an environment variables.
-```bash
-export NATIVE_TOKEN_SPOKE_SUBNET=<"Deployed to" address>
-```
+Note the address the spoke contract was "Deployed to".
 
-### Granting Native Minting Rights to NativeTokenSpoke Contract
-
-In order to mint native tokens on Subnet when received from the C-chain, the NativeTokenSpoke contract must have minting rights. We pre-initialized the Native Minter Precompile with an admin address owned by us. We can use our rights to add this contract address as one of the enabled addresses in the precompile.
-
-_Note: Native Minter Precompile Address = 0x0200000000000000000000000000000000000001_
-
-Sending below transaction will add our spoke bridge contract as one of the enabled addresses.
-```bash
-cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000000000001 "setEnabled(address)" $NATIVE_TOKEN_SPOKE_SUBNET
-```
+export ERC20_TOKEN_SPOKE_SUBNET=<"Deployed to" address>
 
 ## Register Spoke Bridge with Hub Bridge
 
-After deploying the bridge contracts, you'll need to register the spoke bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the hub bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the spoke bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the Hub Bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_SPOKE_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
+cast send --rpc-url mysubnet --private-key $PK $ERC20_TOKEN_SPOKE_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
-### Check if Spoke Bridge is Registered with the Hub Bridge
 
-_Note: This command results in "execution reverted" error. Needs to be fixed._
-
-```bash
-cast call --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "registeredDestination(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_SPOKE_SUBNET
-```
-
-## Add Collateral and Start Sending Tokens
-
-If you followed the instructions correctly, you should have noticed that we minted a supply of 700 ASH tokens on our Subnet. This increases the total supply of ASH token and its wrapped counterparts. We first need to collateralize the bridge by sending an amount equivalent to `initialReserveImbalance` to the destination subnet from the C-chain. Note that this amount will not be minted on the mysubnet so we recommend sending exactly an amount equal to `initialReserveImbalance`.
-
-So the course of action in this section would be:
-- Approve 2000 tokens for the Hub bridge contract to use them
-- Call the `addCollateral` method on Hub bridge contract and send 700 tokens to the spoke bridge contract
-- Send 1000 tokens to your address on the Subnet and check your new balance
-
-### Approve tokens for the Hub bridge contract
+### Approve tokens for the Hub Bridge contract
 
 You can increase/decrease the numbers here as per your requirements. (All values are mentioned in wei)
 
@@ -215,34 +217,21 @@ You can increase/decrease the numbers here as per your requirements. (All values
 cast send --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "approve(address, uint256)" $ERC20_HUB_BRIDGE_C_CHAIN 2000000000000000000000
 ```
 
-### Add Collateral
+## Bridge the Token Cross-chain
 
-Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values are mentioned in wei)
 
-```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "addCollateral(bytes32, address, uint256)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_SPOKE_SUBNET 700000000000000000000
-```
+Now that all the bridge contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
 
-### Send Tokens Cross Chain
-
-Now, send 1000 WASH tokens to the destination chain on your funded address. (All values are mentioned in wei)
+`
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_SPOKE_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_HUB_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
+cast send --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${ERC20_TOKEN_SPOKE_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_HUB_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
 ```
 
 ## Check Balances
 
-Now is the time for truth. You will receive errors along the way if anything is incorrect. Make sure you fix them according to the guide above.
+To confirm the token was bridged from C-Chain to a Subnet, we will check the recipient's balance of wrapped tokens on the Subnet with the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call?highlight=cast%20call#cast-call) foundry command:
 
-If you did everything as described, you'll see that on the destination subnet (mysubnet), you have increased balance now. If you put the new balance in https://eth-converter.com/, you'll see that the balance increased exactly by 1000 tokens. This balance is also in Wei and when you put this value in the converter, you'll get ~1088 tokens.
-
-```bash
-cast balance --rpc-url mysubnet $FUNDED_ADDRESS
-```
-
-You can also confirm whether the bridge is collateralized now by running the below command:
-
-```bash
-cast call --rpc-url mysubnet $NATIVE_TOKEN_SPOKE_SUBNET "isCollateralized()(bool)"
+```zsh
+cast call --rpc-url mysubnet $ERC20_TOKEN_SPOKE_SUBNET "balanceOf(address)(uint)" $FUNDED_ADDRESS
 ```

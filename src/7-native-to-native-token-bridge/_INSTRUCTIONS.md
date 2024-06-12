@@ -15,8 +15,8 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 1. Create a Subnet and Deploy on Local Network
 2. Wrap Native Token on C-Chain
 3. Deploy the Bridge Contracts on C-chain and Subnet
-4. Granting Native Minting Rights to NativeTokenDestination
-5. Register Destination Bridge with Source Bridge
+4. Granting Native Minting Rights to NativeTokenSpoke
+5. Register Spoke Bridge with Hub Bridge
 6. Add Collateral and Start Sending Tokens
 7. Check Balances
 
@@ -36,9 +36,9 @@ Your Subnet should have the following things:
 - Teleporter enabled
 - CLI should run an AWM Relayer
 - Upon Subnet deployment, 100 tokens should be airdropped to the default ewoq address (0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC)
-- Native Minter Precompile enabled with either your admin address or the pre-computed destination bridge address
+- Native Minter Precompile enabled with either your admin address or the pre-computed spoke bridge address
 
-_Note: If you have created your Subnet using AvaCloud, you can add destination bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
+_Note: If you have created your Subnet using AvaCloud, you can add spoke bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
 
 ```bash
 ✔ Subnet-EVM
@@ -143,14 +143,14 @@ export WRAPPED_NATIVE_C_CHAIN=<"Deployed to" address>
 
 
 
-### Native Token Source
+### Native Token Hub
 
-To bridge the token out of your Subnet, you'll need to first deploy a _source_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenSource` contract standard.
+To bridge the token out of your Subnet, you'll need to first deploy a _hub_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenHub` contract standard.
 
-Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenSource.sol](./NativeTokenSource.sol) contract, passing in the following constructor arguments:
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenHub.sol](./NativeTokenHub.sol) contract, passing in the following constructor arguments:
 
 ```zsh
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenSource.sol:NativeTokenSource --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $WRAPPED_NATIVE_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/NativeTokenHub.sol:NativeTokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $WRAPPED_NATIVE_C_CHAIN
 ```
 
 ```
@@ -158,10 +158,10 @@ forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/con
 Export the "Deployed to" address as an environment variables.
 
 ```zsh
-export NATIVE_ORIGIN_BRIDGE_C_CHAIN=<"Deployed to" address>
+export NATIVE_HUB_BRIDGE_C_CHAIN=<"Deployed to" address>
 ```
 
-### NativeTokenDestination Contract
+### NativeTokenSpoke Contract
 
 In order to deploy this contract, we'll need the source chain BlockchainID (in hex). For Local network, you can easily find the BlockchainID using the `avalanche primary describe` command. Make sure you add it in the environment variables.
 
@@ -177,39 +177,39 @@ export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6
 Now, deploy the bridge contract on mysubnet.
 
 ```bash
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/NativeTokenDestination.sol:NativeTokenDestination --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIVE_ORIGIN_BRIDGE_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/NativeTokenSpoke.sol:NativeTokenSpoke --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIVE_HUB_BRIDGE_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
 ```
 
 Export the "Deployed to" address as an environment variables.
 ```bash
-export NATIVE_TOKEN_DESTINATION_SUBNET=<"Deployed to" address>
+export NATIVE_TOKEN_SPOKE_SUBNET=<"Deployed to" address>
 ```
 
-### Granting Native Minting Rights to NativeTokenDestination Contract
+### Granting Native Minting Rights to NativeTokenSpoke Contract
 
-In order to mint native tokens on Subnet when received from the C-chain, the NativeTokenDestination contract must have minting rights. We pre-initialized the Native Minter Precompile with an admin address owned by us. We can use our rights to add this contract address as one of the enabled addresses in the precompile.
+In order to mint native tokens on Subnet when received from the C-chain, the NativeTokenSpoke contract must have minting rights. We pre-initialized the Native Minter Precompile with an admin address owned by us. We can use our rights to add this contract address as one of the enabled addresses in the precompile.
 
 _Note: Native Minter Precompile Address = 0x0200000000000000000000000000000000000001_
 
-Sending below transaction will add our destination bridge contract as one of the enabled addresses.
+Sending below transaction will add our spoke bridge contract as one of the enabled addresses.
 ```bash
-cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000000000001 "setEnabled(address)" $NATIVE_TOKEN_DESTINATION_SUBNET
+cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000000000001 "setEnabled(address)" $NATIVE_TOKEN_SPOKE_SUBNET
 ```
 
-## Register Destination Bridge with Source Bridge
+## Register Spoke Bridge with Hub Bridge
 
-After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithSource` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the spoke bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the Hub Bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_DESTINATION_SUBNET "registerWithSource((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
+cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_SPOKE_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
-### Check if Destination Bridge is Registered with the Source Bridge
+### Check if Spoke Bridge is Registered with the Hub Bridge
 
 _Note: This command results in "execution reverted" error. Needs to be fixed._
 
 ```bash
-cast call --rpc-url local-c --private-key $PK $NATIVE_ORIGIN_BRIDGE_C_CHAIN "registeredDestination(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET
+cast call --rpc-url local-c --private-key $PK $NATIVE_HUB_BRIDGE_C_CHAIN "registeredSpokes(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_SPOKE_SUBNET
 ```
 
 ## Add Collateral and Start Sending Tokens
@@ -217,7 +217,7 @@ cast call --rpc-url local-c --private-key $PK $NATIVE_ORIGIN_BRIDGE_C_CHAIN "reg
 If you followed the instructions correctly, you should have noticed that we minted a supply of 700 ASH tokens on our Subnet. This increases the total supply of ASH token and its wrapped counterparts. We first need to collateralize the bridge by sending an amount equivalent to `initialReserveImbalance` to the destination subnet from the C-chain. Note that this amount will not be minted on the mysubnet so we recommend sending exactly an amount equal to `initialReserveImbalance`.
 
 So the course of action in this section would be:
-- Call the `addCollateral` method on Source bridge contract and send 700 tokens to the destination bridge contract
+- Call the `addCollateral` method on Hub Bridge contract and send 700 tokens to the spoke bridge contract
 - Send 1000 tokens to your address on the Subnet and check your new balance
 
 
@@ -227,7 +227,7 @@ So the course of action in this section would be:
 Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $NATIVE_ORIGIN_BRIDGE_C_CHAIN "addCollateral(bytes32, address)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_DESTINATION_SUBNET --value 700000000000000000000
+cast send --rpc-url local-c --private-key $PK $NATIVE_HUB_BRIDGE_C_CHAIN "addCollateral(bytes32, address)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_SPOKE_SUBNET --value 700000000000000000000
 ```
 
 ### Send Tokens Cross Chain
@@ -235,7 +235,7 @@ cast send --rpc-url local-c --private-key $PK $NATIVE_ORIGIN_BRIDGE_C_CHAIN "add
 Now, send 1000 WASH tokens to the destination chain on your funded address. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $NATIVE_ORIGIN_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address))" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_DESTINATION_SUBNET}, ${FUNDED_ADDRESS}, 0x0000000000000000000000000000000000000000, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" --value 1000000000000000000000
+cast send --rpc-url local-c --private-key $PK $NATIVE_HUB_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address))" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_SPOKE_SUBNET}, ${FUNDED_ADDRESS}, 0x0000000000000000000000000000000000000000, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" --value 1000000000000000000000
 ```
 
 
@@ -252,5 +252,5 @@ cast balance --rpc-url mysubnet $FUNDED_ADDRESS
 You can also confirm whether the bridge is collateralized now by running the below command:
 
 ```bash
-cast call --rpc-url mysubnet $NATIVE_TOKEN_DESTINATION_SUBNET "isCollateralized()(bool)"
+cast call --rpc-url mysubnet $NATIVE_TOKEN_SPOKE_SUBNET "isCollateralized()(bool)"
 ```

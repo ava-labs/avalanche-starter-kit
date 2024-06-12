@@ -467,7 +467,7 @@ contract ERC721BridgeTest is Test {
     }
 
     // Calls submitCreateBridgeERC721 of the test's ERC721Bridge instance to add the specified
-    // token to be able to be sent to the specified destination bridge. Checks that the expected
+    // token to be able to be sent to the specified spoke bridge. Checks that the expected
     // call to the Teleporter contract is made and that the expected event is emitted. This is
     // required before attempting to call bridgeTokens for the given token and bridge.
     function _submitCreateBridgeERC721(
@@ -515,7 +515,7 @@ contract ERC721BridgeTest is Test {
     }
 
     // Calls bridgeERC721 of the test's ERC721Bridge instance to bridge the specified token to the
-    // specified destination bridge. Checks that the expected call to the Teleporter contract is
+    // specified spoke bridge. Checks that the expected call to the Teleporter contract is
     // made and that the expected event is emitted.
     function _submitBridgeERC721(
         bytes32 destinationBlockchainID,
