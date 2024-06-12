@@ -132,7 +132,7 @@ export ERC20_HUB_C_CHAIN=<"Deployed to" address>
 If you deployed the above example contract, you should see a balance of 100,000 tokens when you run the below command:
 
 ```bash
-cast call --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "balanceOf(address)" $FUNDED_ADDRESS
+cast call --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "balanceOf(address)(uint)" $FUNDED_ADDRESS
 ```
 
 ## Deploy Bridge Contracts
