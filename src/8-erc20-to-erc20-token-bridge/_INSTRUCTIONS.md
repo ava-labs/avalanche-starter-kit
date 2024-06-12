@@ -15,7 +15,7 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 1. Create a Subnet and Deploy on Local Network
 2. Deploy an ERC20 Contract on C-chain
 3. Deploy the Bridge Contracts on C-chain and Subnet
-4. Register Destination Bridge with Source Bridge
+4. Register Spoke Bridge with Hub Bridge
 5. Approve Transaction
 6. Start Sending Tokens
 
@@ -35,9 +35,9 @@ Your Subnet should have the following things:
 - Teleporter enabled
 - CLI should run an AWM Relayer
 - Upon Subnet deployment, 100 tokens should be airdropped to the default ewoq address (0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC)
-- Native Minter Precompile enabled with either your admin address or the pre-computed destination bridge address
+- Native Minter Precompile enabled with either your admin address or the pre-computed spoke bridge address
 
-_Note: If you have created your Subnet using AvaCloud, you can add destination bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
+_Note: If you have created your Subnet using AvaCloud, you can add spoke bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
 
 ```bash
 ✔ Subnet-EVM
@@ -139,7 +139,7 @@ cast call --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "balanceOf(addr
 
 We will deploy two bridge contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case).
 
-### ERC20Source Contract
+### ERC20Hub Contract
 
 ```bash
 forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HUB_C_CHAIN
@@ -150,9 +150,9 @@ Export the "Deployed to" address as an environment variables.
 export ERC20_HUB_BRIDGE_C_CHAIN=<"Deployed to" address>
 ```
 
-### ERC20 Destination
+### ERC20 Spoke
 
-To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _spoke_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenSpoke`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this destination contract must also inherit the properties of a standard `ERC20` contract.
+To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _spoke_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenSpoke`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this spoke contract must also inherit the properties of a standard `ERC20` contract.
 
 First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
 
@@ -196,20 +196,20 @@ forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/co
 --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_HUB_BRIDGE_C_CHAIN})" "TOK" "TOK" 18
 ```
 
-Note the address the source contract was "Deployed to".
+Note the address the spoke contract was "Deployed to".
 
 export ERC20_TOKEN_SPOKE_SUBNET=<"Deployed to" address>
 
-## Register Destination Bridge with Source Bridge
+## Register Spoke Bridge with Hub Bridge
 
-After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the spoke bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the Hub Bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
 cast send --rpc-url mysubnet --private-key $PK $ERC20_TOKEN_SPOKE_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
 
-### Approve tokens for the Source bridge contract
+### Approve tokens for the Hub Bridge contract
 
 You can increase/decrease the numbers here as per your requirements. (All values are mentioned in wei)
 

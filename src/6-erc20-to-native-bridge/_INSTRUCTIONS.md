@@ -15,7 +15,7 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 1. Create a Subnet and Deploy on Local Network
 2. Deploy an ERC20 Contract on C-chain
 3. Deploy the Bridge Contracts on C-chain and Subnet
-4. Register Destination Bridge with Source Bridge
+4. Register Spoke Bridge with Hub Bridge
 5. Add Collateral and Start Sending Tokens
 
 ## Local Network Environment
@@ -34,9 +34,9 @@ Your Subnet should have the following things:
 - Teleporter enabled
 - CLI should run an AWM Relayer
 - Upon Subnet deployment, 100 tokens should be airdropped to the default ewoq address (0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC)
-- Native Minter Precompile enabled with either your admin address or the pre-computed destination bridge address
+- Native Minter Precompile enabled with either your admin address or the pre-computed spoke bridge address
 
-_Note: If you have created your Subnet using AvaCloud, you can add destination bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
+_Note: If you have created your Subnet using AvaCloud, you can add spoke bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
 
 ```bash
 ✔ Subnet-EVM
@@ -138,7 +138,7 @@ cast call --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "balanceOf(addr
 
 We will deploy two bridge contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case).
 
-### ERC20Source Contract
+### ERC20Hub Contract
 
 ```bash
 forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HUB_C_CHAIN
@@ -177,20 +177,20 @@ In order to mint native tokens on Subnet when received from the C-chain, the Nat
 
 _Note: Native Minter Precompile Address = 0x0200000000000000000000000000000000000001_
 
-Sending below transaction will add our destination bridge contract as one of the enabled addresses.
+Sending below transaction will add our spoke bridge contract as one of the enabled addresses.
 ```bash
 cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000000000001 "setEnabled(address)" $NATIVE_TOKEN_SPOKE_SUBNET
 ```
 
-## Register Destination Bridge with Source Bridge
+## Register Spoke Bridge with Hub Bridge
 
-After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the spoke bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the hub bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
 cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_SPOKE_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
-### Check if Destination Bridge is Registered with the Source Bridge
+### Check if Spoke Bridge is Registered with the Hub Bridge
 
 _Note: This command results in "execution reverted" error. Needs to be fixed._
 
@@ -203,11 +203,11 @@ cast call --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "registe
 If you followed the instructions correctly, you should have noticed that we minted a supply of 700 ASH tokens on our Subnet. This increases the total supply of ASH token and its wrapped counterparts. We first need to collateralize the bridge by sending an amount equivalent to `initialReserveImbalance` to the destination subnet from the C-chain. Note that this amount will not be minted on the mysubnet so we recommend sending exactly an amount equal to `initialReserveImbalance`.
 
 So the course of action in this section would be:
-- Approve 2000 tokens for the Source bridge contract to use them
-- Call the `addCollateral` method on Source bridge contract and send 700 tokens to the destination bridge contract
+- Approve 2000 tokens for the Hub bridge contract to use them
+- Call the `addCollateral` method on Hub bridge contract and send 700 tokens to the spoke bridge contract
 - Send 1000 tokens to your address on the Subnet and check your new balance
 
-### Approve tokens for the Source bridge contract
+### Approve tokens for the Hub bridge contract
 
 You can increase/decrease the numbers here as per your requirements. (All values are mentioned in wei)
 

@@ -121,7 +121,7 @@ As you deploy the teleporter contracts, keeping track of their addresses will ma
 | Teleporter Registry           | Subnet  | Address of the TeleporterRegistry contract on Subnet deployed by the CLI                                                                            |
 | Wrapped Native Token          | Subnet  | Address of the wrapped token contract for your Subnet's native token to be deployed on the Subnet                                                   |
 | Native Token Hub           | Subnet  | Address of the bridge's Hub contract to be deployed on the Subnet                                                                                |
-| ERC20 Destination             | C-Chain | Address of the bridge's destination contract to be deployed on the C-Chain                                                                          |
+| ERC20 Spoke            | C-Chain | Address of the bridge's spoke contract to be deployed on the C-Chain                                                                          |
 | Subnet Blockchain ID          | Subnet  | Hexadecimal representation of the Subnet's Blockchain ID. Returned by `avalanche subnet describe <subnetName>`.                                     |
 | C-Chain Blockchain ID         | C-Chain | Hexadecimal representation of the C-Chain's Blockchain ID on the selected network. Returned by `avalanche primary describe`.                        |
 
@@ -170,15 +170,15 @@ For example, this foundry command could be entered into your terminal as:
 forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/NativeTokenHub.sol:NativeTokenHub --constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
 ```
 
-Note the address the source contract was "Deployed to".
+Note the address the hub contract was "Deployed to".
 
 ```zsh
 export ERC20_HUB_BRIDGE_SUBNET=<"Deployed to" address>
 ```
 
-### ERC20 Destination
+### ERC20 Spoke
 
-To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _spoke_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenSpoke`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this destination contract must also inherit the properties of a standard `ERC20` contract.
+To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _spoke_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenSpoke`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this spoke contract must also inherit the properties of a standard `ERC20` contract.
 
 First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
 
@@ -220,13 +220,13 @@ lib/teleporter-token-bridge/contracts/src/TokenSpoke/ERC20TokenSpoke.sol:ERC20To
 18
 ```
 
-Note the address the source contract was "Deployed to".
+Note the address the spoke contract was "Deployed to".
 
 export ERC20_TOKEN_SPOKE_C_CHAIN=<"Deployed to" address>
 
-## Register Destination Bridge with Source Bridge
+## Register Spoke Bridge with Hub Bridge
 
-After deploying the bridge contracts, you'll need to register the destination bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the source bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the spoke bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the hub bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
 cast send --rpc-url local-c --private-key $PK $ERC20_TOKEN_SPOKE_C_CHAIN "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
@@ -278,7 +278,7 @@ struct SendTokensInput {
 ```
 
 - destinationBlockchainID: C-Chain Blockchain ID
-- destinationBridgeAddress: ERC20 Destination address
+- destinationBridgeAddress: ERC20 Spoke address
 - recipient: any Ethereum Address you want to send funds to
 - feeTokenAddress: Wrapped Native Token address
 - primaryFee: amount of tokens to pay for Teleporter fee on the source chain, can be 0 for this example
