@@ -6,6 +6,54 @@ The following code example will show you how to send, receive and verify the rec
 
 For convenience the private key `56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027` of the default airdrop address is stored in the environment variable `$PK`. Furthermore, the RPC-url for the C-Chain of your local network is set in the `foundry.toml` file.
 
+## Subnet Configuration
+
+To get started, create a Subnet configuration named "mysubnet":
+
+```zsh
+avalanche subnet create mysubnet
+```
+
+Your Subnet should have Teleporter enabled, the CLI should run an AWM Relayer, and upon Subnet deployment, 1,000,000 tokens should be airdropped to the default ewoq address:
+
+```zsh
+? Choose your VM:
+✔ Subnet-EVM
+? What version of Subnet-EVM would you like?:
+✔ Use latest release version
+? Would you like to enable Teleporter on your VM?:
+✔ Yes
+? Would you like to run AMW Relayer when deploying your VM?:
+✔ Yes
+Installing subnet-evm-v0.6.4...
+subnet-evm-v0.6.4 installation successful
+creating genesis for subnet mysubnet
+Enter your subnet's ChainId. It can be any positive integer.
+ChainId: 012345
+Select a symbol for your subnet's native token
+Token symbol: NATV
+? How would you like to set fees:
+✔ Low disk use    / Low Throughput    1.5 mil gas/s (C-Chain's setting)
+? How would you like to distribute funds:
+✔ Airdrop 1 million tokens to the default ewoq address (do not use in production)
+prefunding address 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC with balance 1000000000000000000000000
+? Advanced: Would you like to add a custom precompile to modify the EVM?:
+✔ No
+✓ Successfully created subnet configuration
+```
+
+Finally, deploy your Subnet:
+
+```zsh
+avalanche subnet deploy mysubnet
+```
+
+```zsh
+? Choose a network for the operation:
+✔ Local Network
+Deploying [mysubnet] to Local Network
+```
+
 ### Setting the Blockchain ID in the Contracts
 
 Make sure to replace the blockchainID in the sender contract `src/0-send-receive/senderOnCChain.sol` with the ID of your Subnet's blockchain.
