@@ -15,7 +15,7 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 1. Create a Subnet and Deploy on Local Network
 2. Deploy an ERC20 Contract on C-chain
 3. Deploy the Bridge Contracts on C-chain and Subnet
-4. Register Spoke Bridge with Hub Bridge
+4. Register Remote Bridge with Home Bridge
 5. Approve Transaction
 6. Start Sending Tokens
 
@@ -32,12 +32,13 @@ avalanche subnet create mysubnet
 ```
 
 Your Subnet should have the following things:
+
 - Teleporter enabled
 - CLI should run an AWM Relayer
 - Upon Subnet deployment, 100 tokens should be airdropped to the default ewoq address (0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC)
-- Native Minter Precompile enabled with either your admin address or the pre-computed spoke bridge address
+- Native Minter Precompile enabled with either your admin address or the pre-computed remote bridge address
 
-_Note: If you have created your Subnet using AvaCloud, you can add spoke bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
+_Note: If you have created your Subnet using AvaCloud, you can add remote bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
 
 ```bash
 ✔ Subnet-EVM
@@ -104,6 +105,7 @@ Currency Symbol:   TOK
 ```
 
 From this output, take note of the following parameters
+
 - Funded Address (with 100 tokens),
 - Teleporter Registry on C-chain, and
 - Teleporter Registry on Subnet
@@ -124,35 +126,37 @@ First step is to deploy the ERC20 contract. We are using OZs example contract he
 forge create --rpc-url local-c --private-key $PK src/8-erc20-to-erc20-token-bridge/ERC20.sol:TOK
 ```
 
-Now, make sure to add the contract address in the environment variables. 
+Now, make sure to add the contract address in the environment variables.
+
 ```bash
-export ERC20_HUB_C_CHAIN=<"Deployed to" address>
+export ERC20_HOME_C_CHAIN=<"Deployed to" address>
 ```
 
 If you deployed the above example contract, you should see a balance of 100,000 tokens when you run the below command:
 
 ```bash
-cast call --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "balanceOf(address)(uint)" $FUNDED_ADDRESS
+cast call --rpc-url local-c --private-key $PK $ERC20_HOME_C_CHAIN "balanceOf(address)(uint)" $FUNDED_ADDRESS
 ```
 
 ## Deploy Bridge Contracts
 
 We will deploy two bridge contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case).
 
-### ERC20Hub Contract
+### ERC20Home Contract
 
 ```bash
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHub/ERC20TokenHub.sol:ERC20TokenHub --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HUB_C_CHAIN
+forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHome/ERC20TokenHome.sol:ERC20TokenHome --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HOME_C_CHAIN
 ```
 
 Export the "Deployed to" address as an environment variables.
+
 ```bash
-export ERC20_HUB_BRIDGE_C_CHAIN=<"Deployed to" address>
+export ERC20_HOME_BRIDGE_C_CHAIN=<"Deployed to" address>
 ```
 
-### ERC20 Spoke
+### ERC20 Remote
 
-To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _spoke_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenSpoke`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this spoke contract must also inherit the properties of a standard `ERC20` contract.
+To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _remote_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenRemote`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this remote contract must also inherit the properties of a standard `ERC20` contract.
 
 First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
 
@@ -178,54 +182,49 @@ avalanche primary describe
 export C_CHAIN_BLOCKCHAIN_ID_HEX=0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241
 ```
 
-
-Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Spoke.sol](./NativeTokenHub.sol) contract, passing in the following constructor arguments:
-
-
+Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Remote.sol](./NativeTokenHome.sol) contract, passing in the following constructor arguments:
 
 - Teleporter Registry Address **(for C-Chain)**
 - Teleporter Manager (our funded address)
 - Source Blockchain ID (hexidecimal representation of our Subnet's Blockchain ID)
-- Token Hub Address (address of NativeTokenHub.sol deployed on Subnet in the last step)
+- Token Home Address (address of NativeTokenHome.sol deployed on Subnet in the last step)
 - Token Name (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
 - Token Symbol (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
 - Token Decimals (uint8 integer representing number of decimal places for the ERC20 token being created. Most ERC20 tokens follow the Ethereum standard, which defines 18 decimal places.)
 
 ```zsh
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenSpoke/ERC20TokenSpoke.sol:ERC20TokenSpoke \
---constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_HUB_BRIDGE_C_CHAIN})" "TOK" "TOK" 18
+forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenRemote/ERC20TokenRemote.sol:ERC20TokenRemote \
+--constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_HOME_BRIDGE_C_CHAIN})" "TOK" "TOK" 18
 ```
 
-Note the address the spoke contract was "Deployed to".
+Note the address the remote contract was "Deployed to".
 
-export ERC20_TOKEN_SPOKE_SUBNET=<"Deployed to" address>
+export ERC20_TOKEN_REMOTE_SUBNET=<"Deployed to" address>
 
-## Register Spoke Bridge with Hub Bridge
+## Register Remote Bridge with Home Bridge
 
-After deploying the bridge contracts, you'll need to register the spoke bridge by sending a dummy message using the `registerWithHub` method. This message includes details which inform the Hub Bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the bridge contracts, you'll need to register the remote bridge by sending a dummy message using the `registerWithHome` method. This message includes details which inform the Home Bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $ERC20_TOKEN_SPOKE_SUBNET "registerWithHub((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
+cast send --rpc-url mysubnet --private-key $PK $ERC20_TOKEN_REMOTE_SUBNET "registerWithHome((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
-
-### Approve tokens for the Hub Bridge contract
+### Approve tokens for the Home Bridge contract
 
 You can increase/decrease the numbers here as per your requirements. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_HUB_C_CHAIN "approve(address, uint256)" $ERC20_HUB_BRIDGE_C_CHAIN 2000000000000000000000
+cast send --rpc-url local-c --private-key $PK $ERC20_HOME_C_CHAIN "approve(address, uint256)" $ERC20_HOME_BRIDGE_C_CHAIN 2000000000000000000000
 ```
 
 ## Bridge the Token Cross-chain
-
 
 Now that all the bridge contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
 
 `
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${ERC20_TOKEN_SPOKE_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_HUB_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
+cast send --rpc-url local-c --private-key $PK $ERC20_HOME_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${ERC20_TOKEN_REMOTE_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_HOME_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
 ```
 
 ## Check Balances
@@ -233,5 +232,5 @@ cast send --rpc-url local-c --private-key $PK $ERC20_HUB_BRIDGE_C_CHAIN "send((b
 To confirm the token was bridged from C-Chain to a Subnet, we will check the recipient's balance of wrapped tokens on the Subnet with the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call?highlight=cast%20call#cast-call) foundry command:
 
 ```zsh
-cast call --rpc-url mysubnet $ERC20_TOKEN_SPOKE_SUBNET "balanceOf(address)(uint)" $FUNDED_ADDRESS
+cast call --rpc-url mysubnet $ERC20_TOKEN_REMOTE_SUBNET "balanceOf(address)(uint)" $FUNDED_ADDRESS
 ```
