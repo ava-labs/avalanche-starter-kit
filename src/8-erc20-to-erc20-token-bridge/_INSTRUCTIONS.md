@@ -56,19 +56,30 @@ creating genesis for subnet mysubnet
 Enter your subnet's ChainId. It can be any positive integer.
 ChainId: 123
 Select a symbol for your subnet's native token
-Token symbol: TOK
+Token symbol: NAT
 ✔ Low disk use    / Low Throughput    1.5 mil gas/s (C-Chain's setting)
 ✔ Customize your airdrop
 Address to airdrop to: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
-Amount to airdrop (in ASH units): 100
+Amount to airdrop (in NAT units): 100
 ✔ No
 ✔ Yes
 ✔ Native Minting
-✔ Add
-Enter Address : 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
-✔ Done
-✔ Done
-✔ Done
+
+This precompile allows admins to permit designated contracts to mint the native token on your subnet.
+For more information visit https://docs.avax.network/subnets/customize-a-subnet#minting-native-coins
+
+✔ Add an address for a role to the allow list
+✔ Admin
+✔ Enter the address of the account (or multiple comma separated): 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+✔ Confirm Allow List
++---------+--------------------------------------------+
+| Admins  | 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC |
++---------+--------------------------------------------+
+| Manager |                                            |
++---------+--------------------------------------------+
+| Enabled |                                            |
++---------+--------------------------------------------+
+✔ Yes
 ✔ No
 ✓ Successfully created subnet configuration
 ```
@@ -96,33 +107,26 @@ Teleporter Registry successfully deployed to c-chain (0x17aB05351fC94a1a67Bf3f56
 Teleporter Messenger successfully deployed to mysubnet (0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf)
 Teleporter Registry successfully deployed to mysubnet (0x73b1dB7E9923c9d8fd643ff381e74dd9618EA1a5)
 
-using awm-relayer version (v1.3.0)
+using awm-relayer version (v1.3.3)
+Installing AWM-Relayer v1.3.3
 Executing AWM-Relayer...
 
 <lots of node information...>
 
 Browser Extension connection details (any node URL from above works):
-RPC URL:           http://127.0.0.1:9650/ext/bc/bFjwbbhaSCotYtdZTPDrQwZn8uVqRoL7YbZxCxXY94k7Qhf3E/rpc
-Codespace RPC URL: https://humble-cod-j4prxq655qpcpw96-9650.app.github.dev/ext/bc/bFjwbbhaSCotYtdZTPDrQwZn8uVqRoL7YbZxCxXY94k7Qhf3E/rpc
-Funded address:    0x834E891749c29d1417f4501B72945B72224d10dB with 600 (10^18)
-Funded address:    0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC with 100 (10^18) - private key: 56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027
+RPC URL:           http://127.0.0.1:9650/ext/bc/2u9Hu7Noja3Z1kbZyrztTMZcDeqb6acwyPyqP4BbVDjoT8ZaYc/rpc
+Codespace RPC URL: https://organic-palm-tree-ppr5xxg7xvv2974r-9650.app.github.dev/ext/bc/2u9Hu7Noja3Z1kbZyrztTMZcDeqb6acwyPyqP4BbVDjoT8ZaYc/rpc
+Funded address:    0x69AD03393144008463beD1DcB3FD33eb9A7081ba with 600 (10^18)
+Funded address:    0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC with 1000000 (10^18) - private key: 56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027
 Network name:      mysubnet
 Chain ID:          123
-Currency Symbol:   TOK
+Currency Symbol:   NAT
 ```
 
-From this output, take note of the following parameters
-
-- Funded Address (with 100 tokens),
-- Teleporter Registry on C-chain, and
-- Teleporter Registry on Subnet
-
-Set these parameters as environment variables so that we can manage them easily and also use them in the commands later.
+From this output, take note of the Funded Address (with 100 tokens) and set the parameter as environment variable so that we can manage them easily and also use them in the commands later.
 
 ```bash
 export FUNDED_ADDRESS=<Funded Address (with 100 tokens)>
-export TELEPORTER_REGISTRY_C_CHAIN=<Teleporter Registry on C-chain>
-export TELEPORTER_REGISTRY_SUBNET=<Teleporter Registry on Subnet>
 ```
 
 ## Deploy ERC20 Contract on C-chain
@@ -147,97 +151,92 @@ cast call --rpc-url local-c --private-key $PK $ERC20_HOME_C_CHAIN "balanceOf(add
 
 ## Deploy Bridge Contracts
 
-We will deploy two bridge contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case).
-
-### ERC20Home Contract
+We will deploy two bridge contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case). This will be done by a single command with the Avalanche CLI
 
 ```bash
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHome/ERC20TokenHome.sol:ERC20TokenHome --constructor-args $TELEPORTER_REGISTRY_C_CHAIN $FUNDED_ADDRESS $ERC20_HOME_C_CHAIN
+avalanche teleporter bridge deploy
 ```
-
-Export the "Deployed to" address as an environment variables.
+Go
 
 ```bash
-export ERC20_HOME_BRIDGE_C_CHAIN=<"Deployed to" address>
+✔ Local Network
+✔ C-Chain
+✔ Deploy a new Home for the token
+✔ An ERC-20 token
+Enter the address of the ERC-20 Token: 0x5DB9A7629912EBF95876228C24A848de0bfB43A9
+✔ Subnet mysubnet
+Downloading Bridge Contracts
+Compiling Bridge
+
+Home Deployed to http://127.0.0.1:9650/ext/bc/C/rpc
+Home Address: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
+
+Remote Deployed to http://127.0.0.1:9650/ext/bc/2u9Hu7Noja3Z1kbZyrztTMZcDeqb6acwyPyqP4BbVDjoT8ZaYc/rpc
+Remote Address: 0x0D189a705c1FFe77F1bF3ee834931b6b9B356c05
 ```
 
-### ERC20 Remote
+Save the Remote contract address in the environment variables.
 
-To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _remote_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenRemote`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this remote contract must also inherit the properties of a standard `ERC20` contract.
+```bash
+export ERC20_REMOTE_SUBNET=<"Remote address">
+```
 
-First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
+## Get Balances
 
-```zsh
-avalanche subnet describe mysubnet
+Before transfering some funds Cross-Chain, check the current balances of both the ERC20 Home token and the Remote one. 
+
+```bash
+avalanche key list --local --keys ewoq  --subnets c,mysubnet --tokens $ERC20_HOME_C_CHAIN,$ERC20_REMOTE_SUBNET
 ```
 
 ```bash
-export SUBNET_BLOCKCHAIN_ID_HEX=0x4d569bf60a38e3ab3e92afd016fe37f7060d7d63c44e3378f42775bf82a7642d
-```
-
-`Source Blockchain ID` is in the field: `Local Network BlockchainID (HEX)`.
-
-Do the same for the C-Chain:
-
-```zsh
-avalanche primary describe
-```
-
-`Destination Blockchain ID` is in the field: `BlockchainID (HEX)`.
-
-```bash
-export C_CHAIN_BLOCKCHAIN_ID_HEX=0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241
-```
-
-Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Remote.sol](./NativeTokenHome.sol) contract, passing in the following constructor arguments:
-
-- Teleporter Registry Address **(for C-Chain)**
-- Teleporter Manager (our funded address)
-- Source Blockchain ID (hexidecimal representation of our Subnet's Blockchain ID)
-- Token Home Address (address of NativeTokenHome.sol deployed on Subnet in the last step)
-- Token Name (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
-- Token Symbol (input in the constructor of the [wrapped token contract](./ExampleWNATV.sol))
-- Token Decimals (uint8 integer representing number of decimal places for the ERC20 token being created. Most ERC20 tokens follow the Ethereum standard, which defines 18 decimal places.)
-
-```zsh
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenRemote/ERC20TokenRemote.sol:ERC20TokenRemote \
---constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_HOME_BRIDGE_C_CHAIN})" "TOK" "TOK" 18
-```
-
-Note the address the remote contract was "Deployed to".
-
-export ERC20_TOKEN_REMOTE_SUBNET=<"Deployed to" address>
-
-## Register Remote Bridge with Home Bridge
-
-After deploying the bridge contracts, you'll need to register the remote bridge by sending a dummy message using the `registerWithHome` method. This message includes details which inform the Home Bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
-
-```bash
-cast send --rpc-url mysubnet --private-key $PK $ERC20_TOKEN_REMOTE_SUBNET "registerWithHome((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
-```
-
-### Approve tokens for the Home Bridge contract
-
-You can increase/decrease the numbers here as per your requirements. (All values are mentioned in wei)
-
-```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_HOME_C_CHAIN "approve(address, uint256)" $ERC20_HOME_BRIDGE_C_CHAIN 2000000000000000000000
++--------+------+---------+--------------------------------------------+---------------+------------------+---------------+
+|  KIND  | NAME | SUBNET  |                  ADDRESS                   |     TOKEN     |     BALANCE      |    NETWORK    |
++--------+------+---------+--------------------------------------------+---------------+------------------+---------------+
+| stored | ewoq | mysubnet | 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC | TOK (0x0D18.)|               0  | Local Network |
++        +      +----------+--------------------------------------------+---------------+-----------------+---------------+
+|        |      | C-Chain  | 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC | TOK (0x5DB9.)| 100000.000000000 | Local Network |
++--------+------+----------+--------------------------------------------+---------------+-----------------+---------------+
 ```
 
 ## Bridge the Token Cross-chain
 
-Now that all the bridge contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
-
-`
+Now that the bridge contracts have been deployed, transfer some ERC20 tokens TOK from C-Chain to _mysubnet_ with the following command
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $ERC20_HOME_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address), uint256)" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${ERC20_TOKEN_REMOTE_SUBNET}, ${FUNDED_ADDRESS}, ${ERC20_HOME_C_CHAIN}, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" 1000000000000000000000
+avalanche key transfer
+```
+
+```
+✔ Local Network
+✔ C-Chain
+✔ Subnet mysubnet
+Enter the address of the Bridge on c-chain: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
+Enter the address of the Bridge on mysubnet: 0x0D189a705c1FFe77F1bF3ee834931b6b9B356c05
+✔ ewoq
+✔ Key
+✔ ewoq
+Amount to send (TOKEN units): 100
 ```
 
 ## Check Balances
 
 To confirm the token was bridged from C-Chain to a Subnet, we will check the recipient's balance of wrapped tokens on the Subnet with the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call?highlight=cast%20call#cast-call) foundry command:
 
-```zsh
-cast call --rpc-url mysubnet $ERC20_TOKEN_REMOTE_SUBNET "balanceOf(address)(uint)" $FUNDED_ADDRESS
+## Get New Balances
+
+Before transfering some funds Cross-Chain, check the current balances of both the ERC20 Home token and the Remote one. 
+
+```bash
+avalanche key list --local --keys ewoq  --subnets c,mysubnet --tokens $ERC20_HOME_C_CHAIN,$ERC20_REMOTE_SUBNET
+```
+
+```bash
++--------+------+----------+--------------------------------------------+---------------+-----------------+---------------+
+|  KIND  | NAME |  SUBNET  |                  ADDRESS                   |     TOKEN     |     BALANCE     |    NETWORK    |
++--------+------+----------+--------------------------------------------+---------------+-----------------+---------------+
+| stored | ewoq | mysubnet | 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC | TOK (0x0D18.) |   100.000000000 | Local Network |
++        +      +----------+--------------------------------------------+---------------+-----------------+---------------+
+|        |      | C-Chain  | 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC | TOK (0x5DB9.) | 99900.000000000 | Local Network |
++--------+------+----------+--------------------------------------------+---------------+-----------------+---------------+
 ```
