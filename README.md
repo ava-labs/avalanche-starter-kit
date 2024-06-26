@@ -22,6 +22,20 @@ You can run them directly on Github by clicking **Code**, switching to the **Cod
 
 Alternatively, you can run them locally. You need [docker](https://www.docker.com/products/docker-desktop/) installed and [VS Code](https://code.visualstudio.com/) with the extensions [Dev Container extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers). Then clone the repository and open it in VS Code. VS Code will ask you if you want to reopen the project in a container.
 
+If you are running on Apple Silicon you may run into issues while opening and running your dev container in VSCode. The issue resides in Foundry platform targeting. The fix is currently in draft: <https://github.com/foundry-rs/foundry/pull/7512>
+
+To workaround, please edit the file `Dockerfile` to include `--platform linux/amd64` before pulling Foundry.
+
+```
+# .devcontainer/Dockerfile
+FROM avaplatform/avalanche-cli:latest as avalanche-cli
+FROM avaplatform/awm-relayer:latest as awm-relayer
+FROM --platform=linux/amd64 ghcr.io/foundry-rs/foundry:latest as foundry
+...
+```
+
+This should allow you to open the dev container in VSCode.
+
 ## Starting a local Avalanche Network
 
 To start a local Avalanche network with your own teleporter-enabled Subnet inside the container follow these commands. Your Avalanche network will be completely independent of the Avalanche Mainnet and Fuji Testnet. It will have its own Primary Network (C-Chain, X-Chain & P-Chain). You will not have access to services available on Fuji (such as Chainlink services or bridges). If you require these, go to the [Fuji Testnet](#fuji-testnet) section.
