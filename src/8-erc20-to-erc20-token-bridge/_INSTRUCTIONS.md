@@ -12,12 +12,19 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 
 ## What we have to do
 
-1. Create a Subnet and Deploy on Local Network
-2. Deploy an ERC20 Contract on C-chain
-3. Deploy the Bridge Contracts on C-chain and Subnet
-4. Register Remote Bridge with Home Bridge
-5. Approve Transaction
-6. Start Sending Tokens
+1. Codespace Environment Setup
+2. Create a Subnet and Deploy on Local Network
+3. Deploy an ERC20 Contract on C-chain
+4. Deploy the Bridge Contracts on C-chain and Subnet
+5. Register Remote Bridge with Home Bridge
+6. Approve Transaction
+7. Start Sending Tokens
+
+## Environment Setup
+
+### Run on Github Codespace
+
+You can run them directly on Github by clicking **Code**, switching to the **Codespaces** tab and clicking **Create codespace on main**. A new window will open that loads the codespace. Afterwards you will see a browser version of VS code with all the dependencies installed. Codespace time out after some time of inactivity, but can be restarted.
 
 ## Local Network Environment
 
