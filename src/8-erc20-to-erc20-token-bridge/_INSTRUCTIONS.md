@@ -16,9 +16,7 @@ _Disclaimer: The teleporter-token-bridge contracts used in this tutorial are und
 2. Create a Subnet and Deploy on Local Network
 3. Deploy an ERC20 Contract on C-chain
 4. Deploy the Bridge Contracts on C-chain and Subnet
-5. Register Remote Bridge with Home Bridge
-6. Approve Transaction
-7. Start Sending Tokens
+5. Start Sending Tokens
 
 ## Environment Setup
 
