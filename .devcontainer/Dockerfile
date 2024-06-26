@@ -11,3 +11,7 @@ COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 COPY --from=foundry /usr/local/bin/cast /usr/local/bin/cast
 COPY --from=foundry /usr/local/bin/anvil /usr/local/bin/anvil
 COPY --from=foundry /usr/local/bin/chisel /usr/local/bin/chisel
+
+RUN mkdir -p /home/vscode/.foundry/bin
+COPY --from=foundry /usr/local/bin/forge /home/vscode/.foundry/bin/forge
+
