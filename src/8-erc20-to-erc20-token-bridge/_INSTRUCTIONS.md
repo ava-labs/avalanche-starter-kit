@@ -219,10 +219,6 @@ Enter the address of the Bridge on mysubnet: 0x0D189a705c1FFe77F1bF3ee834931b6b9
 Amount to send (TOKEN units): 100
 ```
 
-## Check Balances
-
-To confirm the token was bridged from C-Chain to a Subnet, we will check the recipient's balance of wrapped tokens on the Subnet with the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call?highlight=cast%20call#cast-call) foundry command:
-
 ## Get New Balances
 
 Before transfering some funds Cross-Chain, check the current balances of both the ERC20 Home token and the Remote one. 
