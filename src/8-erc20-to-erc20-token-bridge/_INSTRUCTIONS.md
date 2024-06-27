@@ -41,43 +41,22 @@ Your Subnet should have the following things:
 - Teleporter enabled
 - CLI should run an AWM Relayer
 - Upon Subnet deployment, 100 tokens should be airdropped to the default ewoq address (0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC)
-- Native Minter Precompile enabled with either your admin address or the pre-computed remote bridge address
-
-_Note: If you have created your Subnet using AvaCloud, you can add remote bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
 
 ```bash
 ✔ Subnet-EVM
 ✔ Use latest release version
 ✔ Yes
 ✔ Yes
+Installing subnet-evm-v0.6.6...
+subnet-evm-v0.6.6 installation successful
 creating genesis for subnet mysubnet
 Enter your subnet's ChainId. It can be any positive integer.
 ChainId: 123
 Select a symbol for your subnet's native token
 Token symbol: NAT
 ✔ Low disk use    / Low Throughput    1.5 mil gas/s (C-Chain's setting)
-✔ Customize your airdrop
-Address to airdrop to: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
-Amount to airdrop (in NAT units): 100
-✔ No
-✔ Yes
-✔ Native Minting
-
-This precompile allows admins to permit designated contracts to mint the native token on your subnet.
-For more information visit https://docs.avax.network/subnets/customize-a-subnet#minting-native-coins
-
-✔ Add an address for a role to the allow list
-✔ Admin
-✔ Enter the address of the account (or multiple comma separated): 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
-✔ Confirm Allow List
-+---------+--------------------------------------------+
-| Admins  | 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC |
-+---------+--------------------------------------------+
-| Manager |                                            |
-+---------+--------------------------------------------+
-| Enabled |                                            |
-+---------+--------------------------------------------+
-✔ Yes
+✔ Airdrop 1 million tokens to the default ewoq address (do not use in production)
+prefunding address 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC with balance 1000000000000000000000000
 ✔ No
 ✓ Successfully created subnet configuration
 ```
