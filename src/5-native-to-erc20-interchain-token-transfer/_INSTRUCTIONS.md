@@ -153,7 +153,7 @@ Transaction hash: 0x054e7b46b221c30f400b81df0fa2601668ae832054cf8e8b873f4ba615fa
 
 ### Native Token Home
 
-To Transfer the token out of your Subnet, you'll need to first deploy a _home_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenHome` contract standard.
+To Transfer the token out of your Subnet, you'll need to first deploy a _home_ contract on your Subnet that implements the `INativeTokenTransferer` interface, and inherits the properties of the `TeleporterTokenHome` contract standard.
 
 Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenHome.sol](./NativeTokenHome.sol) contract, passing in the following constructor arguments:
 
@@ -179,7 +179,7 @@ export ERC20_HOME_TRANSFERER_SUBNET=<"Deployed to" address>
 
 ### ERC20 Remote
 
-To ensure the wrapped token is transfered into the destination chain (in this case, C-Chain) you'll need to deploy a _remote_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenRemote`. In order for the transfered tokens to have all the normal functionality of a locally deployed ERC20 token, this remote contract must also inherit the properties of a standard `ERC20` contract.
+To ensure the wrapped token is transfered into the destination chain (in this case, C-Chain) you'll need to deploy a _remote_ contract that implements the `IERC20TokenTransferer` interface, as well as inheriting the properties of `TeleporterTokenRemote`. In order for the transfered tokens to have all the normal functionality of a locally deployed ERC20 token, this remote contract must also inherit the properties of a standard `ERC20` contract.
 
 First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
 

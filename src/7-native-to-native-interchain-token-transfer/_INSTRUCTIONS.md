@@ -1,4 +1,4 @@
-# Bridge an Native Token to a Subnet as Native Token
+# Transfer an Native Token to a Subnet as Native Token
 
 The following example will show you how to send a native Token on C-chain to a Subnet as a native token using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
@@ -14,9 +14,9 @@ _Disclaimer: The avalanche-interchain-token-transfer contracts used in this tuto
 
 1. Create a Subnet and Deploy on Local Network
 2. Wrap Native Token on C-Chain
-3. Deploy the Bridge Contracts on C-chain and Subnet
+3. Deploy the Avalanche Interchain Token Transfer Contracts on C-chain and Subnet
 4. Granting Native Minting Rights to NativeTokenRemote
-5. Register Remote Bridge with Home Bridge
+5. Register Remote Token with Home Transferer
 6. Add Collateral and Start Sending Tokens
 7. Check Balances
 
@@ -37,9 +37,9 @@ Your Subnet should have the following things:
 - Teleporter enabled
 - CLI should run an AWM Relayer
 - Upon Subnet deployment, 100 tokens should be airdropped to the default ewoq address (0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC)
-- Native Minter Precompile enabled with either your admin address or the pre-computed remote bridge address
+- Native Minter Precompile enabled with either your admin address or the pre-computed remote token address
 
-_Note: If you have created your Subnet using AvaCloud, you can add remote bridge address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
+_Note: If you have created your Subnet using AvaCloud, you can add remote token address [using the dashboard](https://support.avacloud.io/avacloud-how-do-i-use-the-native-token-minter)._
 
 ```bash
 ✔ Subnet-EVM
@@ -117,14 +117,14 @@ export TELEPORTER_REGISTRY_C_CHAIN=<Teleporter Registry on C-chain>
 export TELEPORTER_REGISTRY_SUBNET=<Teleporter Registry on Subnet>
 ```
 
-## Deploy Bridge Contracts
+## Deploy Avalanche Interchain Token Transfer Contracts
 
 ### Wrapped Native Token
 
 On your originsubnet, deploy a wrapped token contract for your native token. When we configured the Subnet earlier, we named the token `NATV`. This is reflected in line 19 of our [example wrapped token contract](./ExampleWNATV.sol).
 
 ```
-forge create --rpc-url local-c --private-key $PK src/7-native-to-native-token-bridge/ExampleWNATV.sol:WNATV
+forge create --rpc-url local-c --private-key $PK src/7-native-to-native-interchain-token-transfer/ExampleWNATV.sol:WNATV
 ```
 
 ```zsh
@@ -145,7 +145,7 @@ export WRAPPED_NATIVE_C_CHAIN=<"Deployed to" address>
 
 ### Native Token Home
 
-To bridge the token out of your Subnet, you'll need to first deploy a _home_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenHome` contract standard.
+To transfer the token out of your Subnet, you'll need to first deploy a _home_ contract on your Subnet that implements the `INativeTokenTransferer` interface, and inherits the properties of the `TeleporterTokenHome` contract standard.
 
 Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenHome.sol](./NativeTokenHome.sol) contract, passing in the following constructor arguments:
 
@@ -220,12 +220,12 @@ If you followed the instructions correctly, you should have noticed that we mint
 
 So the course of action in this section would be:
 
-- Call the `addCollateral` method on Home Bridge contract and send 700 tokens to the remote bridge contract
+- Call the `addCollateral` method on Home Transferer contract and send 700 tokens to the remote token contract
 - Send 1000 tokens to your address on the Subnet and check your new balance
 
 ### Add Collateral
 
-Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values are mentioned in wei)
+Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the transferer contract. (All values are mentioned in wei)
 
 ```bash
 cast send --rpc-url local-c --private-key $PK $NATIVE_HOME_TRANSFERER_C_CHAIN "addCollateral(bytes32, address)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_REMOTE_SUBNET --value 700000000000000000000
@@ -249,7 +249,7 @@ If you did everything as described, you'll see that on the destination subnet (m
 cast balance --rpc-url mysubnet $FUNDED_ADDRESS
 ```
 
-You can also confirm whether the bridge is collateralized now by running the below command:
+You can also confirm whether the remote token is collateralized now by running the below command:
 
 ```bash
 cast call --rpc-url mysubnet $NATIVE_TOKEN_REMOTE_SUBNET "isCollateralized()(bool)"

@@ -1,4 +1,4 @@
-# Bridge an ERC20 Token to a Subnet as an ERC20 Token
+# Transfer an ERC20 Token to a Subnet as an ERC20 Token
 
 The following example will show you how to send an ERC20 Token on C-chain to a Subnet as an ERC20 token using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
@@ -15,7 +15,7 @@ _Disclaimer: The avalanche-interchain-token-transfer contracts used in this tuto
 1. Codespace Environment Setup
 2. Create a Subnet and Deploy on Local Network
 3. Deploy an ERC20 Contract on C-chain
-4. Deploy the Bridge Contracts on C-chain and Subnet
+4. Deploy the Avalanche Interchain Token Transfer Contracts on C-chain and Subnet
 5. Start Sending Tokens
 
 ## Environment Setup
@@ -126,12 +126,12 @@ If you deployed the above example contract, you should see a balance of 100,000 
 cast call --rpc-url local-c --private-key $PK $ERC20_HOME_C_CHAIN "balanceOf(address)(uint)" $FUNDED_ADDRESS
 ```
 
-## Deploy Bridge Contracts
+## Deploy Avalanche Interchain Token Transfer Contracts
 
-We will deploy two bridge contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case). This will be done by a single command with the Avalanche CLI
+We will deploy two Interchain Token Transfer contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case). This will be done by a single command with the Avalanche CLI
 
 ```bash
-avalanche teleporter bridge deploy
+avalanche interchain tokenTransferrer deploy
 ```
 Go
 
@@ -176,9 +176,9 @@ avalanche key list --local --keys ewoq  --subnets c,mysubnet --tokens $ERC20_HOM
 +--------+------+----------+--------------------------------------------+---------------+-----------------+---------------+
 ```
 
-## Bridge the Token Cross-chain
+## Transfer the Token Cross-chain
 
-Now that the bridge contracts have been deployed, transfer some ERC20 tokens TOK from C-Chain to _mysubnet_ with the following command
+Now that the Avalanche Interchain Token Transfer contracts have been deployed, transfer some ERC20 tokens TOK from C-Chain to _mysubnet_ with the following command
 
 ```bash
 avalanche key transfer
