@@ -2,7 +2,7 @@
 
 The following example will show you how to send an ERC20 Token on C-chain to a Subnet as an ERC20 token using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
-**All token bridge contracts and interfaces implemented in this example implementation are maintained in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/contracts/src) repository.**
+**All Avalanche Interchain Token Transfer contracts and interfaces implemented in this example implementation are maintained in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/contracts/src) repository.**
 
 If you prefer full end-to-end testing written in Golang for bridging ERC20s, native tokens, or any combination of the two, you can view the test workflows directly in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/tests/flows) repository.
 

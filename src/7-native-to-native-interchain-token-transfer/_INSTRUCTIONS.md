@@ -2,7 +2,7 @@
 
 The following example will show you how to send a native Token on C-chain to a Subnet as a native token using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
-**All token bridge contracts and interfaces implemented in this example implementation are maintained in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/contracts/src) repository.**
+**All Avalanche Interchain Token Transfer contracts and interfaces implemented in this example implementation are maintained in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/contracts/src) repository.**
 
 If you prefer full end-to-end testing written in Golang for bridging ERC20s, native tokens, or any combination of the two, you can view the test workflows directly in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/tests/flows) repository.
 
@@ -158,7 +158,7 @@ forge create --rpc-url local-c --private-key $PK lib/avalanche-interchain-token-
 Export the "Deployed to" address as an environment variables.
 
 ```zsh
-export NATIVE_HOME_BRIDGE_C_CHAIN=<"Deployed to" address>
+export NATIVE_HOME_TRANSFERER_C_CHAIN=<"Deployed to" address>
 ```
 
 ### NativeTokenRemote Contract
@@ -174,10 +174,10 @@ export C_CHAIN_BLOCKCHAIN_ID_HEX=0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f3
 export SUBNET_BLOCKCHAIN_ID_HEX=0x4dc739c081bee16a185b05db1476f7958f5a21b05513b6f9f0ae722dcc1e42f0
 ```
 
-Now, deploy the bridge contract on mysubnet.
+Now, deploy the Remote contract on mysubnet.
 
 ```bash
-forge create --rpc-url mysubnet --private-key $PK lib/avalanche-interchain-token-transfer/contracts/src/TokenRemote/NativeTokenRemote.sol:NativeTokenRemote --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIVE_HOME_BRIDGE_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
+forge create --rpc-url mysubnet --private-key $PK lib/avalanche-interchain-token-transfer/contracts/src/TokenRemote/NativeTokenRemote.sol:NativeTokenRemote --constructor-args "(${TELEPORTER_REGISTRY_SUBNET}, ${FUNDED_ADDRESS}, ${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${NATIVE_HOME_TRANSFERER_C_CHAIN})" "NATV" 700000000000000000000 0 false 0
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -192,31 +192,31 @@ In order to mint native tokens on Subnet when received from the C-chain, the Nat
 
 _Note: Native Minter Precompile Address = 0x0200000000000000000000000000000000000001_
 
-Sending below transaction will add our remote bridge contract as one of the enabled addresses.
+Sending below transaction will add our remote token contract as one of the enabled addresses.
 
 ```bash
 cast send --rpc-url mysubnet --private-key $PK 0x0200000000000000000000000000000000000001 "setEnabled(address)" $NATIVE_TOKEN_REMOTE_SUBNET
 ```
 
-## Register Remote Bridge with Home Bridge
+## Register Remote Token with Home Transferer
 
-After deploying the bridge contracts, you'll need to register the remote bridge by sending a dummy message using the `registerWithHome` method. This message includes details which inform the Home Bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the Transferer contracts, you'll need to register the Remote token by sending a dummy message using the `registerWithHome` method. This message includes details which inform the home Transferer about your destination blockchain and settings, eg. `initialReserveImbalance`.
 
 ```bash
 cast send --rpc-url mysubnet --private-key $PK $NATIVE_TOKEN_REMOTE_SUBNET "registerWithHome((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
-### Check if Remote Bridge is Registered with the Home Bridge
+### Check if Remote Token is Registered with the Home Transferer
 
 _Note: This command results in "execution reverted" error. Needs to be fixed._
 
 ```bash
-cast call --rpc-url local-c --private-key $PK $NATIVE_HOME_BRIDGE_C_CHAIN "registeredRemotes(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_REMOTE_SUBNET
+cast call --rpc-url local-c --private-key $PK $NATIVE_HOME_TRANSFERER_C_CHAIN "registeredRemotes(bytes32, address)((bool,uint256,uint256,bool))" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_REMOTE_SUBNET
 ```
 
 ## Add Collateral and Start Sending Tokens
 
-If you followed the instructions correctly, you should have noticed that we minted a supply of 700 ASH tokens on our Subnet. This increases the total supply of ASH token and its wrapped counterparts. We first need to collateralize the bridge by sending an amount equivalent to `initialReserveImbalance` to the destination subnet from the C-chain. Note that this amount will not be minted on the mysubnet so we recommend sending exactly an amount equal to `initialReserveImbalance`.
+If you followed the instructions correctly, you should have noticed that we minted a supply of 700 ASH tokens on our Subnet. This increases the total supply of ASH token and its wrapped counterparts. We first need to collateralize the Transferer by sending an amount equivalent to `initialReserveImbalance` to the destination Subnet from the C-chain. Note that this amount will not be minted on the mysubnet so we recommend sending exactly an amount equal to `initialReserveImbalance`.
 
 So the course of action in this section would be:
 
@@ -228,7 +228,7 @@ So the course of action in this section would be:
 Since we had an `initialReserveImbalance` of 700 ASH tokens on mysubnet, we'll send 700 tokens from our side via the bridge contract. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $NATIVE_HOME_BRIDGE_C_CHAIN "addCollateral(bytes32, address)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_REMOTE_SUBNET --value 700000000000000000000
+cast send --rpc-url local-c --private-key $PK $NATIVE_HOME_TRANSFERER_C_CHAIN "addCollateral(bytes32, address)" $SUBNET_BLOCKCHAIN_ID_HEX $NATIVE_TOKEN_REMOTE_SUBNET --value 700000000000000000000
 ```
 
 ### Send Tokens Cross Chain
@@ -236,7 +236,7 @@ cast send --rpc-url local-c --private-key $PK $NATIVE_HOME_BRIDGE_C_CHAIN "addCo
 Now, send 1000 WASH tokens to the destination chain on your funded address. (All values are mentioned in wei)
 
 ```bash
-cast send --rpc-url local-c --private-key $PK $NATIVE_HOME_BRIDGE_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address))" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_REMOTE_SUBNET}, ${FUNDED_ADDRESS}, 0x0000000000000000000000000000000000000000, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" --value 1000000000000000000000
+cast send --rpc-url local-c --private-key $PK $NATIVE_HOME_TRANSFERER_C_CHAIN "send((bytes32, address, address, address, uint256, uint256, uint256, address))" "(${SUBNET_BLOCKCHAIN_ID_HEX}, ${NATIVE_TOKEN_REMOTE_SUBNET}, ${FUNDED_ADDRESS}, 0x0000000000000000000000000000000000000000, 0, 0, 250000, 0x0000000000000000000000000000000000000000)" --value 1000000000000000000000
 ```
 
 ## Check Balances
