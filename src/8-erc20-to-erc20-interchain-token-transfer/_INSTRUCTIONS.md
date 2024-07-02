@@ -1,21 +1,21 @@
-# Bridge an ERC20 Token to a Subnet as an ERC20 Token
+# Transfer an ERC20 Token to a Subnet as an ERC20 Token
 
 The following example will show you how to send an ERC20 Token on C-chain to a Subnet as an ERC20 token using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
-**All token bridge contracts and interfaces implemented in this example implementation are maintained in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/contracts/src) repository.**
+**All Avalanche Interchain Token Transfer contracts and interfaces implemented in this example implementation are maintained in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/contracts/src) repository.**
 
-If you prefer full end-to-end testing written in Golang for bridging ERC20s, native tokens, or any combination of the two, you can view the test workflows directly in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/tests/flows) repository.
+If you prefer full end-to-end testing written in Golang for bridging ERC20s, native tokens, or any combination of the two, you can view the test workflows directly in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/tests/flows) repository.
 
-Deep dives on each template interface can be found [here](https://github.com/ava-labs/teleporter-token-bridge/blob/main/contracts/README.md).
+Deep dives on each template interface can be found [here](https://github.com/ava-labs/avalanche-interchain-token-transfer/blob/main/contracts/README.md).
 
-_Disclaimer: The teleporter-token-bridge contracts used in this tutorial are under active development and are not yet intended for production deployments. Use at your own risk._
+_Disclaimer: The avalanche-interchain-token-transfer contracts used in this tutorial are under active development and are not yet intended for production deployments. Use at your own risk._
 
 ## What we have to do
 
 1. Codespace Environment Setup
 2. Create a Subnet and Deploy on Local Network
 3. Deploy an ERC20 Contract on C-chain
-4. Deploy the Bridge Contracts on C-chain and Subnet
+4. Deploy the Avalanche Interchain Token Transfer Contracts on C-chain and Subnet
 5. Start Sending Tokens
 
 ## Environment Setup
@@ -111,7 +111,7 @@ export FUNDED_ADDRESS=<Funded Address (with 100 tokens)>
 First step is to deploy the ERC20 contract. We are using OZs example contract here and the contract is renamed to `ERC20.sol` for convenience. You can use any other pre deployed ERC20 contract or change the names according to your Subnet native token as well.
 
 ```bash
-forge create --rpc-url local-c --private-key $PK src/8-erc20-to-erc20-token-bridge/ERC20.sol:TOK
+forge create --rpc-url local-c --private-key $PK src/8-erc20-to-erc20-interchain-token-transfer/ERC20.sol:TOK
 ```
 
 Now, make sure to add the contract address in the environment variables.
@@ -126,12 +126,12 @@ If you deployed the above example contract, you should see a balance of 100,000 
 cast call --rpc-url local-c --private-key $PK $ERC20_HOME_C_CHAIN "balanceOf(address)(uint)" $FUNDED_ADDRESS
 ```
 
-## Deploy Bridge Contracts
+## Deploy Avalanche Interchain Token Transfer Contracts
 
-We will deploy two bridge contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case). This will be done by a single command with the Avalanche CLI
+We will deploy two Interchain Token Transfer contracts. One of the source chain (which is C-chain in our case) and another on the destination chain (mysubnet in our case). This will be done by a single command with the Avalanche CLI
 
 ```bash
-avalanche teleporter bridge deploy
+avalanche interchain tokenTransferrer deploy
 ```
 Go
 
@@ -142,8 +142,8 @@ Go
 ✔ An ERC-20 token
 Enter the address of the ERC-20 Token: 0x5DB9A7629912EBF95876228C24A848de0bfB43A9
 ✔ Subnet mysubnet
-Downloading Bridge Contracts
-Compiling Bridge
+Downloading Avalanche InterChain Token Transfer Contracts
+Compiling Avalanche InterChain Token Transfer
 
 Home Deployed to http://127.0.0.1:9650/ext/bc/C/rpc
 Home Address: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
@@ -176,9 +176,9 @@ avalanche key list --local --keys ewoq  --subnets c,mysubnet --tokens $ERC20_HOM
 +--------+------+----------+--------------------------------------------+---------------+-----------------+---------------+
 ```
 
-## Bridge the Token Cross-chain
+## Transfer the Token Cross-chain
 
-Now that the bridge contracts have been deployed, transfer some ERC20 tokens TOK from C-Chain to _mysubnet_ with the following command
+Now that the Avalanche Interchain Token Transfer contracts have been deployed, transfer some ERC20 tokens TOK from C-Chain to _mysubnet_ with the following command
 
 ```bash
 avalanche key transfer
@@ -188,8 +188,8 @@ avalanche key transfer
 ✔ Local Network
 ✔ C-Chain
 ✔ Subnet mysubnet
-Enter the address of the Bridge on c-chain: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
-Enter the address of the Bridge on mysubnet: 0x0D189a705c1FFe77F1bF3ee834931b6b9B356c05
+Enter the address of the Token Transferrer on c-chain: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
+Enter the address of the Token Transferrer on mysubnet: 0x0D189a705c1FFe77F1bF3ee834931b6b9B356c05
 ✔ ewoq
 ✔ Key
 ✔ ewoq

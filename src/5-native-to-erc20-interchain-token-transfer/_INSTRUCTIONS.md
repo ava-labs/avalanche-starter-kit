@@ -1,14 +1,14 @@
-# Bridge a Subnet's Native Token to the C-Chain
+# Transfer a Subnet's Native Token to the C-Chain
 
 The following code example will show you how to send a Subnet's native token to the C-Chain using Teleporter and Foundry. This demo is conducted on a local network run by the CLI, but can be applied to Fuji Testnet and Avalanche Mainnet directly.
 
-**All token bridge contracts and interfaces implemented in this example implementation are maintained in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/contracts/src) repository.**
+**All Avalanche Interchain Token Transfer contracts and interfaces implemented in this example implementation are maintained in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/contracts/src) repository.**
 
-If you prefer full end-to-end testing written in Golang for bridging ERC20s, native tokens, or any combination of the two, you can view the test workflows directly in the [teleporter-token-bridge](https://github.com/ava-labs/teleporter-token-bridge/tree/main/tests/flows) repository.
+If you prefer full end-to-end testing written in Golang for bridging ERC20s, native tokens, or any combination of the two, you can view the test workflows directly in the [avalanche-interchain-token-transfer](https://github.com/ava-labs/avalanche-interchain-token-transfer/tree/main/tests/flows) repository.
 
-Deep dives on each template interface can be found [here](https://github.com/ava-labs/teleporter-token-bridge/blob/main/contracts/README.md).
+Deep dives on each template interface can be found [here](https://github.com/ava-labs/avalanche-interchain-token-transfer/blob/main/contracts/README.md).
 
-_Disclaimer: The teleporter-token-bridge contracts used in this tutorial are under active development and are not yet intended for production deployments. Use at your own risk._
+_Disclaimer: The avalanche-interchain-token-transfer contracts used in this tutorial are under active development and are not yet intended for production deployments. Use at your own risk._
 
 ## Local Network Environment
 
@@ -116,23 +116,23 @@ As you deploy the teleporter contracts, keeping track of their addresses will ma
 
 | Parameter                     | Network | Description                                                                                                                                         |
 | :---------------------------- | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Funded Address (with 1000000) | Both    | The public address you use to deploy contracts, and send tokens through the bridge. Used as the `teleporterManager` constructor parameter in this example. |
+| Funded Address (with 1000000) | Both    | The public address you use to deploy contracts, and send tokens through the Avalanche Interchain Token Transfer. Used as the `teleporterManager` constructor parameter in this example. |
 | Teleporter Registry           | C-Chain | Address of the TeleporterRegistry contract on C-Chain deployed by the CLI                                                                           |
 | Teleporter Registry           | Subnet  | Address of the TeleporterRegistry contract on Subnet deployed by the CLI                                                                            |
 | Wrapped Native Token          | Subnet  | Address of the wrapped token contract for your Subnet's native token to be deployed on the Subnet                                                   |
-| Native Token Home           | Subnet  | Address of the bridge's Home contract to be deployed on the Subnet                                                                                |
-| ERC20 Remote            | C-Chain | Address of the bridge's remote contract to be deployed on the C-Chain                                                                          |
+| Native Token Home           | Subnet  | Address of the Transferer's Home contract to be deployed on the Subnet                                                                                |
+| ERC20 Remote            | C-Chain | Address of the Transferer's remote contract to be deployed on the C-Chain                                                                          |
 | Subnet Blockchain ID          | Subnet  | Hexadecimal representation of the Subnet's Blockchain ID. Returned by `avalanche subnet describe <subnetName>`.                                     |
 | C-Chain Blockchain ID         | C-Chain | Hexadecimal representation of the C-Chain's Blockchain ID on the selected network. Returned by `avalanche primary describe`.                        |
 
-## Deploy Bridge Contracts
+## Deploy Avalanche Interchain Token Transfer Contracts
 
 ### Wrapped Native Token
 
 On your Subnet, deploy a wrapped token contract for your native token. When we configured the Subnet earlier, we named the token `NATV`. This is reflected in line 19 of our [example wrapped token contract](./ExampleWNATV.sol).
 
 ```
-forge create --rpc-url mysubnet --private-key $PK src/5-native-to-erc20-token-bridge/ExampleWNATV.sol:WNATV
+forge create --rpc-url mysubnet --private-key $PK src/5-native-to-erc20-interchain-token-transfer/ExampleWNATV.sol:WNATV
 ```
 
 Export the "Deployed to" address as an environment variables.
@@ -153,12 +153,12 @@ Transaction hash: 0x054e7b46b221c30f400b81df0fa2601668ae832054cf8e8b873f4ba615fa
 
 ### Native Token Home
 
-To bridge the token out of your Subnet, you'll need to first deploy a _home_ contract on your Subnet that implements the `INativeTokenBridge` interface, and inherits the properties of the `TeleporterTokenHome` contract standard.
+To Transfer the token out of your Subnet, you'll need to first deploy a _home_ contract on your Subnet that implements the `INativeTokenTransferer` interface, and inherits the properties of the `TeleporterTokenHome` contract standard.
 
 Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [NativeTokenHome.sol](./NativeTokenHome.sol) contract, passing in the following constructor arguments:
 
 ```zsh
-forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenHome/NativeTokenHome.sol:NativeTokenHome --constructor-args $TELEPORTER_REGISTRY_SUBNET $FUNDED_ADDRESS $WRAPPED_ERC20_HOME_SUBNET
+forge create --rpc-url mysubnet --private-key $PK lib/avalanche-interchain-token-transfer/contracts/src/TokenHome/NativeTokenHome.sol:NativeTokenHome --constructor-args $TELEPORTER_REGISTRY_SUBNET $FUNDED_ADDRESS $WRAPPED_ERC20_HOME_SUBNET
 ```
 
 - Teleporter Registry (for our Subnet)
@@ -168,18 +168,18 @@ forge create --rpc-url mysubnet --private-key $PK lib/teleporter-token-bridge/co
 For example, this foundry command could be entered into your terminal as:
 
 ```zsh
-forge create --rpc-url mysubnet --private-key $PK src/5-native-token-bridge/NativeTokenHome.sol:NativeTokenHome --constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
+forge create --rpc-url mysubnet --private-key $PK src/5-native-interchain-token-transfer/NativeTokenHome.sol:NativeTokenHome --constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC 0x52C84043CD9c865236f11d9Fc9F56aa003c1f922
 ```
 
 Note the address the home contract was "Deployed to".
 
 ```zsh
-export ERC20_HOME_BRIDGE_SUBNET=<"Deployed to" address>
+export ERC20_HOME_TRANSFERER_SUBNET=<"Deployed to" address>
 ```
 
 ### ERC20 Remote
 
-To ensure the wrapped token is bridged into the destination chain (in this case, C-Chain) you'll need to deploy a _remote_ contract that implements the `IERC20Bridge` interface, as well as inheriting the properties of `TeleporterTokenRemote`. In order for the bridged tokens to have all the normal functionality of a locally deployed ERC20 token, this remote contract must also inherit the properties of a standard `ERC20` contract.
+To ensure the wrapped token is transfered into the destination chain (in this case, C-Chain) you'll need to deploy a _remote_ contract that implements the `IERC20TokenTransferer` interface, as well as inheriting the properties of `TeleporterTokenRemote`. In order for the transfered tokens to have all the normal functionality of a locally deployed ERC20 token, this remote contract must also inherit the properties of a standard `ERC20` contract.
 
 First, get the `Source Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your Subnet, run:
 
@@ -196,7 +196,7 @@ export SUBNET_BLOCKCHAIN_ID_HEX=0x4d569bf60a38e3ab3e92afd016fe37f7060d7d63c44e33
 Using the [`forge create`](https://book.getfoundry.sh/reference/forge/forge-create) command, we will deploy the [ERC20Remote.sol](./NativeTokenHome.sol) contract, passing in the following constructor arguments:
 
 ```zsh
-forge create --rpc-url local-c --private-key $PK lib/teleporter-token-bridge/contracts/src/TokenRemote/ERC20TokenRemote.sol:ERC20TokenRemote --constructor-args "(${TELEPORTER_REGISTRY_C_CHAIN}, ${FUNDED_ADDRESS}, ${SUBNET_BLOCKCHAIN_ID_HEX}, ${ERC20_HOME_BRIDGE_SUBNET})" "Wrapped NATV" "WNATV" 18
+forge create --rpc-url local-c --private-key $PK lib/avalanche-interchain-token-transfer/contracts/src/TokenRemote/ERC20TokenRemote.sol:ERC20TokenRemote --constructor-args "(${TELEPORTER_REGISTRY_C_CHAIN}, ${FUNDED_ADDRESS}, ${SUBNET_BLOCKCHAIN_ID_HEX}, ${ERC20_HOME_TRANSFERER_SUBNET})" "Wrapped NATV" "WNATV" 18
 ```
 
 - Teleporter Registry Address **(for C-Chain)**
@@ -211,7 +211,7 @@ For example, this contract deployment could be entered into your terminal as:
 
 ```zsh
 forge create --rpc-url local-c --private-key $PK \
-lib/teleporter-token-bridge/contracts/src/TokenRemote/ERC20TokenRemote.sol:ERC20TokenRemote \
+lib/avalanche-interchain-token-transfer/contracts/src/TokenRemote/ERC20TokenRemote.sol:ERC20TokenRemote \
 --constructor-args 0xAd00Ce990172Cfed987B0cECd3eF58221471a0a3 \
 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC \
 0xbcb8143686b1f0c765a1404bb94ad13134cafa5cf56f181a3a990ba21b1151b9 \
@@ -225,15 +225,15 @@ Note the address the remote contract was "Deployed to".
 
 export ERC20_TOKEN_REMOTE_C_CHAIN=<"Deployed to" address>
 
-## Register Remote Bridge with Home Bridge
+## Register Remote Token with Home Transferer
 
-After deploying the bridge contracts, you'll need to register the remote bridge by sending a dummy message using the `registerWithHome` method. This message includes details which inform the home bridge about your destination blockchain and bridge settings, eg. `initialReserveImbalance`.
+After deploying the Transferer contracts, you'll need to register the Remote token by sending a dummy message using the `registerWithHome` method. This message includes details which inform the home Transferer about your destination blockchain and settings, eg. `initialReserveImbalance`.
 
 ```bash
 cast send --rpc-url local-c --private-key $PK $ERC20_TOKEN_REMOTE_C_CHAIN "registerWithHome((address, uint256))" "(0x0000000000000000000000000000000000000000, 0)"
 ```
 
-## Bridge the Token Cross-chain
+## Transfer the Token Cross-chain
 
 First, get the `Destination Blockchain ID` in hexidecimal format, which in this example is the BlockchainID of your local C-Chain, run:
 
@@ -247,7 +247,7 @@ avalanche primary describe
 export C_CHAIN_BLOCKCHAIN_ID_HEX=0x55e1fcfdde01f9f6d4c16fa2ed89ce65a8669120a86f321eef121891cab61241
 ```
 
-Now that all the bridge contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
+Now that all the Avalanche Interchain Token Transfer contracts have been deployed, send a native token from your Subnet to C-Chain with the [`cast send`](https://book.getfoundry.sh/reference/cast/cast-send) foundry command.
 
 ```zsh
 cast send --rpc-url mysubnet --private-key $PK <TokenHomeAddress> \
@@ -264,7 +264,7 @@ function send(SendTokensInput calldata input) external payable {
     }
 ```
 
-The function parameters are defined by the `SendTokensInput` struct defined in line 26 of [`ITeleporterTokenBridge`](./interfaces/ITeleporterTokenBridge.sol).
+The function parameters are defined by the `SendTokensInput` struct defined in line 26 of [`ITokenTransferer`](lib/avalanche-interchain-token-transfer/contracts/src/interfaces/ITokenTransferer.sol).
 
 ```sol
 struct SendTokensInput {
@@ -284,7 +284,7 @@ struct SendTokensInput {
 - feeTokenAddress: Wrapped Native Token address
 - primaryFee: amount of tokens to pay for Teleporter fee on the source chain, can be 0 for this example
 - secondaryFee: amount of tokens to pay for Teleporter fee if a multi-hop is needed, can be 0 for this example
-- requiredGasLimit: gas limit requirement for sending to a token bridge, can be 1000000 for this example
+- requiredGasLimit: gas limit requirement for an Interchain Token Transfer, can be 1000000 for this example
 
 For example, this token transfer could be entered into your terminal as:
 
@@ -311,15 +311,15 @@ struct SendTokensInput {
 }
 
 ```bash
-cast send --rpc-url mysubnet --private-key $PK $ERC20_HOME_BRIDGE_SUBNET "send((bytes32, address, address, address, uint256, uint256, uint256, address))" "(${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_TOKEN_REMOTE_C_CHAIN}, ${FUNDED_ADDRESS}, 0x0000000000000000000000000000000000000000, 0, 0, 250000, 0x0000000000000000000000000000000000000000)"  --value 1
+cast send --rpc-url mysubnet --private-key $PK $ERC20_HOME_TRANSFERER_SUBNET "send((bytes32, address, address, address, uint256, uint256, uint256, address))" "(${C_CHAIN_BLOCKCHAIN_ID_HEX}, ${ERC20_TOKEN_REMOTE_C_CHAIN}, ${FUNDED_ADDRESS}, 0x0000000000000000000000000000000000000000, 0, 0, 250000, 0x0000000000000000000000000000000000000000)"  --value 1
 ```
 
 If your parameters were entered correctly, this command will sign and publish a transaction, resulting in a large JSON response of transaction information in the terminal.
 
-To confirm the token was bridged from Subnet to C-Chain, we will check the recipient's balance of wrapped tokens on the C-Chain with the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call?highlight=cast%20call#cast-call) foundry command:
+To confirm the token was transfered from Subnet to C-Chain, we will check the recipient's balance of wrapped tokens on the C-Chain with the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call?highlight=cast%20call#cast-call) foundry command:
 
 ```zsh
 cast call --rpc-url local-c $ERC20_TOKEN_REMOTE_C_CHAIN "balanceOf(address)(uint)" $FUNDED_ADDRESS
 ```
 
-If the command returns a balance greater than 0, congratulations, you've now successfully deployed a Teleporter-enabled bridge and successfully sent tokens cross-chain!
+If the command returns a balance greater than 0, congratulations, you've now successfully deployed an Avalanche Interchain Token Transferer and successfully sent tokens cross-chain!

@@ -5,7 +5,7 @@
 
 pragma solidity 0.8.18;
 
-import {IWrappedNativeToken} from "@teleporter-token-bridge/interfaces/IWrappedNativeToken.sol";
+import {IWrappedNativeToken} from "@avalanche-interchain-token-transfer/interfaces/IWrappedNativeToken.sol";
 import {ERC20} from "@openzeppelin/contracts@4.8.1/token/ERC20/ERC20.sol";
 import {Address} from "@openzeppelin/contracts@4.8.1/utils/Address.sol";
 
