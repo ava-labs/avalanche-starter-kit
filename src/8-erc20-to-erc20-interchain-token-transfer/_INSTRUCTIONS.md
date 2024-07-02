@@ -111,7 +111,7 @@ export FUNDED_ADDRESS=<Funded Address (with 100 tokens)>
 First step is to deploy the ERC20 contract. We are using OZs example contract here and the contract is renamed to `ERC20.sol` for convenience. You can use any other pre deployed ERC20 contract or change the names according to your Subnet native token as well.
 
 ```bash
-forge create --rpc-url local-c --private-key $PK src/8-erc20-to-erc20-token-bridge/ERC20.sol:TOK
+forge create --rpc-url local-c --private-key $PK src/8-erc20-to-erc20-interchain-token-transfer/ERC20.sol:TOK
 ```
 
 Now, make sure to add the contract address in the environment variables.
@@ -142,8 +142,8 @@ Go
 ✔ An ERC-20 token
 Enter the address of the ERC-20 Token: 0x5DB9A7629912EBF95876228C24A848de0bfB43A9
 ✔ Subnet mysubnet
-Downloading Bridge Contracts
-Compiling Bridge
+Downloading Avalanche InterChain Token Transfer Contracts
+Compiling Avalanche InterChain Token Transfer
 
 Home Deployed to http://127.0.0.1:9650/ext/bc/C/rpc
 Home Address: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
@@ -188,8 +188,8 @@ avalanche key transfer
 ✔ Local Network
 ✔ C-Chain
 ✔ Subnet mysubnet
-Enter the address of the Bridge on c-chain: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
-Enter the address of the Bridge on mysubnet: 0x0D189a705c1FFe77F1bF3ee834931b6b9B356c05
+Enter the address of the Token Transferrer on c-chain: 0x4Ac1d98D9cEF99EC6546dEd4Bd550b0b287aaD6D
+Enter the address of the Token Transferrer on mysubnet: 0x0D189a705c1FFe77F1bF3ee834931b6b9B356c05
 ✔ ewoq
 ✔ Key
 ✔ ewoq
