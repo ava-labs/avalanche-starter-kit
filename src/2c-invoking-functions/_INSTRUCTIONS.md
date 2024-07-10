@@ -1,4 +1,4 @@
-# Instructions - Invoking Functions (Multi-function)
+# Instructions - Invoking Functions (Extended-Calculator)
 
 The following code example will show you how to send a roundtrip message and verify the receival of messages using teleporter and foundry. It includes instructions for the [local network](#local-network).
 
@@ -6,7 +6,7 @@ The following code example will show you how to send a roundtrip message and ver
 
 ### Setting the Blockchain ID in the Contracts
 
-Make sure to replace the blockchainID in the sender contract `src/1-invoking-functions/CalculatorSenderOnCChain.sol` with the ID of your Subnet's blockchain.
+Make sure to replace the blockchainID in the sender contract `src/1-invoking-functions/SimpleCalculatorSenderOnCChain.sol` with the ID of your Subnet's blockchain.
 
 > :no_entry_sign: blockchainID of Subnet ≠ chainID of Subnet
 
@@ -22,7 +22,7 @@ Take the HEX blockchain ID and replace it sender contract:
 teleporterMessenger.sendCrossChainMessage(
     TeleporterMessageInput({
         // Replace with blockchainID of your Subnet (see instructions in Readme)
-        destinationBlockchainID: 0x92756d698399805f0088fc07fc42af47c67e1d38c576667ac6c7031b8df05293,
+        destinationBlockchainID: 0xd7ed7b978d4d6c478123bf9b326d47e69f959206d34e42ea4de2d1d2acbc93ea,
         destinationAddress: destinationAddress,
         
         // ...
@@ -36,7 +36,7 @@ After adapting the contracts you can deploy them with `forge create`:
 
 ### Sender Contract
 ```bash
-forge create --rpc-url local-c --private-key $PK src/2a-invoking-functions/CalculatorSenderOnCChain.sol:SimpleCalculatorSenderOnCChain
+forge create --rpc-url local-c --private-key $PK src/2a-invoking-functions/ExtendedCalculatorSenderOnCChain.sol:SimpleCalculatorSenderOnCChain
 ```
 
 Then save the sender contract address (displayed in `Deployed To:`) in an environment variable:
@@ -46,7 +46,7 @@ export SENDER_ADDRESS=0x123...
 ```
 ### Receiver Contract
 ```bash
-forge create --rpc-url mysubnet --private-key $PK src/2a-invoking-functions/CalculatorReceiverOnSubnet.sol:SimpleCalculatorReceiverOnSubnet
+forge create --rpc-url mysubnet --private-key $PK src/2a-invoking-functions/ExtendedCalculatorReceiverOnSubnet.sol:SimpleCalculatorReceiverOnSubnet
 ```
 
 Then save the sender contract address (displayed in `Deployed To:`) in an environment variable:
@@ -58,7 +58,7 @@ export RECEIVER_ADDRESS=0x123...
 ### Interaction
 
 ```bash 
-cast send --rpc-url local-c --private-key $PK $SENDER_ADDRESS "sendAddMessage(address, uint256, uint256)" $RECEIVER_ADDRESS 2 3
+cast send --rpc-url local-c --private-key $PK $SENDER_ADDRESS "sendTripleSumMessage(address, uint256, uint256, uint256)" $RECEIVER_ADDRESS 2 3 4
 ```
 
 ## Verify Message Receipt
