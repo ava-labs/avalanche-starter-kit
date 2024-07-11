@@ -86,25 +86,38 @@ After adapting the contracts you can deploy them with `forge create`:
 
 ```bash
 forge create --rpc-url local-c --private-key $PK src/0-send-receive/senderOnCChain.sol:SenderOnCChain
-
 ```
+
+Save sender address in environment variable
+```bash
+export SENDER_ADDRESS=0x...
+``` 
+
 
 ```bash
 forge create --rpc-url mysubnet --private-key $PK src/0-send-receive/receiverOnSubnet.sol:ReceiverOnSubnet
 ```
+
+
+Save receiver address in environment variable
+```bash
+export RECEIVER_ADDRESS=0x...
+``` 
+
+
 
 ### Sending a Message
 
 You can find `<sender_contract_address>` in the output of the first and the `<receiver_contract_address>` of the second `forge create` command in the line saying `Deployed to:`.
 
 ```bash
-cast send --rpc-url local-c --private-key $PK <sender_contract_address> "sendMessage(address,string)" <receiver_contract_address> "Hello"
+cast send --rpc-url local-c --private-key $PK $SENDER_ADDRESS "sendMessage(address,string)" $RECEIVER_ADDRESS "Hello"
 ```
 
 ### Verifying Message Receipt
 
 ```bash
-cast call --rpc-url mysubnet <receiver_contract_address> "lastMessage()(string)"
+cast call --rpc-url mysubnet $RECEIVER_ADDRESS "lastMessage()(string)"
 ```
 
 ## Fuji Testnet
