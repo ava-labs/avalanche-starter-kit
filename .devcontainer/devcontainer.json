@@ -16,7 +16,8 @@
 		"init-git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
 	},
 	"postStartCommand": {
-		"update-git-submodules": "git submodule update --recursive"
+		"update-git-submodules": "git submodule update --recursive",
+		"enable-avalanche-cli-metrics": "avalanche config metrics enable"
 	},
 	"forwardPorts": [
 		9650,
