@@ -11,7 +11,7 @@
 		"PATH": "${containerEnv:PATH}:/usr/local/bin/",
 		"PK": "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027",
 		"KEYSTORE": "${containerWorkspaceFolder}/keystore",
-		"AVALANCHE_CLI_GITHUB_TOKEN": "${containerEnv:GITHUB_TOKEN}"
+		"AVALANCHE_CLI_GITHUB_TOKEN": "${GITHUB_TOKEN}"
 	},
 	"postCreateCommand": {
 		"init-git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
