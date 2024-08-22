@@ -62,9 +62,19 @@ anothersubnet = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 ```
 
 ## Code Examples
-- [0-send-receive](src/0-send-receive/_INSTRUCTIONS.md) 
-- [1-send-roundtrip](src/2-invoking-functions/_INSTRUCTIONS.md)
-- [2-invoking-functions](src/0-send-receive/_INSTRUCTIONS.md)
-- [3-registry](src/3-registry/_INSTRUCTIONS.md)
-- [4-creating-contracts](src/4-creating-contracts/_INSTRUCTIONS.md)
-- [x-erc721-bridge](src/x-erc721-bridge/Readme.md)
+
+### Interchain Messaging
+- [0a-send-receive](src/interchain-messaging/0a-send-receive/_INSTRUCTIONS.md) 
+- [0b-send-receive](src/interchain-messaging/0b-send-receive/_INSTRUCTIONS.md) 
+- [1-send-roundtrip](src/interchain-messaging/1-send-roundtrip/_INSTRUCTIONS.md)
+- [2a-invoking-functions](src/interchain-messaging/2a-invoking-functions/_INSTRUCTIONS.md)
+- [2b-invoking-functions](src/interchain-messaging/2b-invoking-functions/_INSTRUCTIONS.md)
+- [2c-invoking-functions](src/interchain-messaging/2c-invoking-functions/_INSTRUCTIONS.md)
+- [3-registry](src/interchain-messaging/3-registry/_INSTRUCTIONS.md)
+- [4-incentivize-relayer](src/interchain-messaging/4-incentivize-relayer/_INSTRUCTIONS.md)
+
+### Interchain Token Transfer
+- [0-native-to-erc20-interchain-token-transfer](src/interchain-token-transfer/0-native-to-erc20-interchain-token-transfer/_INSTRUCTIONS.md)
+- [1-erc20-to-native-interchain-token-transfer](src/interchain-token-transfer/1-erc20-to-native-interchain-token-transfer/_INSTRUCTIONS.md)
+- [2-native-to-native-interchain-token-transfer](src/interchain-token-transfer/2-native-to-native-interchain-token-transfer/_INSTRUCTIONS.md)
+- [3-erc20-to-erc20-interchain-token-transfer](src/interchain-token-transfer/3-erc20-to-erc20-interchain-token-transfer/_INSTRUCTIONS.md)
