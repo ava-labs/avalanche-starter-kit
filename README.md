@@ -78,3 +78,4 @@ anothersubnet = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 - [1-erc20-to-native-interchain-token-transfer](src/interchain-token-transfer/1-erc20-to-native-interchain-token-transfer/_INSTRUCTIONS.md)
 - [2-native-to-native-interchain-token-transfer](src/interchain-token-transfer/2-native-to-native-interchain-token-transfer/_INSTRUCTIONS.md)
 - [3-erc20-to-erc20-interchain-token-transfer](src/interchain-token-transfer/3-erc20-to-erc20-interchain-token-transfer/_INSTRUCTIONS.md)
+- [4-send-and-call](src/interchain-token-transfer/4-send-and-call/_INSTRUCTIONS.md)
