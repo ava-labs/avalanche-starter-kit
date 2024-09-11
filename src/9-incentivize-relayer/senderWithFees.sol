@@ -6,7 +6,7 @@
 pragma solidity ^0.8.18;
 
 import "@teleporter/ITeleporterMessenger.sol";
-import {IERC20} from "@openzeppelin/contracts@4/token/ERC20/IERC20.sol";
+import {IERC20} from "@openzeppelin/contracts@4.8.1/token/ERC20/IERC20.sol";
 
 contract SenderWithFeesOnCChain {
     ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
@@ -18,7 +18,7 @@ contract SenderWithFeesOnCChain {
         IERC20 feeContract = IERC20(feeAddress);
         uint256 feeAmount = 500000000000000;
         feeContract.transferFrom(msg.sender, address(this), feeAmount);
-        feeContract.approve(address(teleporterMessenger), feeAmount);
+        feeContract.approve(address(messenger), feeAmount);
 
         messenger.sendCrossChainMessage(
             TeleporterMessageInput({
