@@ -18,7 +18,7 @@ contract SenderWithFeesOnCChain {
         IERC20 feeContract = IERC20(feeAddress);
         uint256 feeAmount = 500000000000000;
         feeContract.transferFrom(msg.sender, address(this), feeAmount);
-        feeContract.approve(address(teleporterMessenger), feeAmount);
+        feeContract.approve(address(messenger), feeAmount);
 
         messenger.sendCrossChainMessage(
             TeleporterMessageInput({
