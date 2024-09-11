@@ -1,0 +1,1 @@
+Follow [Incentivizing a Relayer on Avalanche Academy](https://academy.avax.network/course/interchain-messaging/12-incentivizing-a-relayer/05-deploy-fee-token-contract)

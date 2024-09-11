@@ -1,0 +1,1 @@
+Follow [ERC-20 to ERC-20 Token Bridge on Avalanche Academy](https://academy.avax.network/course/interchain-token-transfer/06-erc-20-to-erc-20-bridge/01-erc-20-to-erc-20-bridge)

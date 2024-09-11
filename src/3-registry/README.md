@@ -1,0 +1,1 @@
+Follow [Interchain Messaging Registry on Avalanche Academy](https://academy.avax.network/course/interchain-messaging/07-icm-registry/03-interact-with-the-registry)
