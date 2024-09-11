@@ -23,7 +23,7 @@ contract SenderOnCChain is ITeleporterReceiver {
                 destinationBlockchainID: 0x609fa1886e1fbc9585127fa22b6e77a785ebdeecc01049f294638c7909e53c5e,
                 destinationAddress: destinationAddress,
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
-                requiredGasLimit: 100000,
+                requiredGasLimit: 200000,
                 allowedRelayerAddresses: new address[](0),
                 message: abi.encode("Hello")
             })
