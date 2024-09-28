@@ -535,6 +535,12 @@ Inputs complete, issuing transaction to add the provided validator
 
 Now, we've completed the installation and configuration process.
 
+After deploying and being a validator dont forget to add your subnet to blockchain with
+```
+avalanche blockchain join [blockchainName] 
+```
+this will add your subnet to your node and create necessary subnet plugin
+
 # Deploying Contracts
 
 We need **Token Home** and **Token Remote** contracts to manage cross-chain transactions in a secure and efficient way.
