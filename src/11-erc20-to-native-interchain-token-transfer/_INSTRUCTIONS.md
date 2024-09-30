@@ -24,7 +24,6 @@ This guide will help you build your own Avalanche Layer 1 (L1) blockchain networ
 Ensure the following tools are installed:
 - Avalanche CLI
 - AvalancheGo
-- AWM Relayer
 
 ## 2. Installing the Avalanche CLI
 
