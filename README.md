@@ -62,9 +62,25 @@ anotherblockchain = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 ```
 
 ## Code Examples
-- [0-send-receive](src/0-send-receive/_INSTRUCTIONS.md) 
-- [1-send-roundtrip](src/2-invoking-functions/_INSTRUCTIONS.md)
-- [2-invoking-functions](src/0-send-receive/_INSTRUCTIONS.md)
-- [3-registry](src/3-registry/_INSTRUCTIONS.md)
-- [4-creating-contracts](src/4-creating-contracts/_INSTRUCTIONS.md)
-- [x-erc721-bridge](src/x-erc721-bridge/Readme.md)
+
+### Interchain Messaging
+- [send-receive](https://academy.avax.network/course/interchain-messaging/04-icm-basics/01-icm-basics) 
+- [send-roundtrip](https://academy.avax.network/course/interchain-messaging/05-two-way-communication/01-two-way-communication)
+- [invoking-functions](https://academy.avax.network/course/interchain-messaging/06-invoking-functions/01-invoking-functions)
+- [registry](https://academy.avax.network/course/interchain-messaging/07-icm-registry/01-icm-registry)
+- [incentivized-relayer](https://academy.avax.network/course/interchain-messaging/12-incentivizing-a-relayer/01-incentivizing-a-relayer)
+
+### Interchain Token Transfer
+- [erc20-to-erc20](https://academy.avax.network/course/interchain-token-transfer/06-erc-20-to-erc-20-bridge/01-erc-20-to-erc-20-bridge) 
+- [native-to-erc20](https://academy.avax.network/course/interchain-token-transfer/08-native-to-erc-20-bridge/01-native-to-erc-20-bridge)
+- [native-to-native](https://academy.avax.network/course/l1-tokenomics/03-multi-chain-ecosystems/04-use-any-native-as-native-token)
+- [erc20-to-native](https://academy.avax.network/course/l1-tokenomics/03-multi-chain-ecosystems/03-use-erc20-as-native-token)
+- [cross-chain-token-swaps](https://academy.avax.network/course/interchain-token-transfer/13-cross-chain-token-swaps/07-exchange-contract)
+
+### Misc
+- [creating-contracts](contracts/misc/creating-contracts/REAEDME.md)
+- [erc721-bridge](contracts/misc/erc721-bridge/README.md)
+
+
+## Web-Apps
+- [AvaCloud APIs](https://academy.avax.network/course/avacloudapis)
