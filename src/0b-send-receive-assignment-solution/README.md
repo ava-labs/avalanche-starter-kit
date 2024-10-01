@@ -1,1 +1,0 @@
-Solution to assignment [Interchain Messaging Basics, Contract Adaptation on Avalanche Academy](https://academy.avax.network/course/interchain-messaging/04-icm-basics/08-adapting-the-contract-exercise)

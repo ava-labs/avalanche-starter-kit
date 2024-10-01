@@ -1,1 +1,0 @@
-Follow [Native to ERC-20 Token Bridge on Avalanche Academy](https://academy.avax.network/course/interchain-token-transfer/08-native-to-erc-20-bridge/01-native-to-erc-20-bridge) 

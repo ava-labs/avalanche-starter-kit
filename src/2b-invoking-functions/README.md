@@ -1,1 +1,0 @@
-Follow [Invoking Functions, Encoding the Function Name on Avalanche Academy](https://academy.avax.network/course/interchain-messaging/06-invoking-functions/06-encoding-function-name)

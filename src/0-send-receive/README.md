@@ -1,1 +1,0 @@
-Follow [Interchain Messaging Basics on Avalanche Academy](https://academy.avax.network/course/interchain-messaging/04-icm-basics/04-create-sender-contract)
