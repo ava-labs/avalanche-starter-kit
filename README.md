@@ -80,3 +80,7 @@ anotherblockchain = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 ### Misc
 - [creating-contracts](contracts/misc/creating-contracts/REAEDME.md)
 - [erc721-bridge](contracts/misc/erc721-bridge/README.md)
+
+
+## Web-Apps
+- [AvaCloud APIs](https://academy.avax.network/course/avacloudapis)
