@@ -8,7 +8,6 @@
 		"--network=host"
 	],
 	"features": {
-		// "ghcr.io/devcontainers/features/node:1": {},
 		"ghcr.io/devcontainers-community/npm-features/typescript": {}
 	},
 	"remoteEnv": {
