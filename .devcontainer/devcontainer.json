@@ -8,7 +8,11 @@
 		"--network=host"
 	],
 	"features": {
-		"ghcr.io/devcontainers-community/npm-features/typescript": {}
+		"ghcr.io/devcontainers-community/npm-features/typescript": {},
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "lts",
+			"installYarn": true
+		}
 	},
 	"remoteEnv": {
 		"PATH": "${containerEnv:PATH}:/usr/local/bin/",
