@@ -9,6 +9,7 @@ This starter kit will get you started with developing solidity smart contract dA
 - **Teleporter**: All contracts you may want to interact with Teleporter
 - **AWM Relayer**: The binary to run your own relayer
 - **Examples**: Contracts showcasing how to achieve common patterns, such as sending simple messages, call functions of a contract on another blockchain and bridging assets. Please note that these example contracts have not been audited and are for educational purposes only
+- **BuilderKit**: A component library providing UI elements for ICTT bridges, Cross-Chain swaps, ...
 
 ## Set Up
 
