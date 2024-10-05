@@ -1,6 +1,7 @@
 "use client"
 
-import { avalanche, avalancheFuji } from "wagmi/chains";
+import { avalanche } from "wagmi/chains";
+import { fuji } from "./../../chains/definitions/fuji";
 import { echo } from "./../../chains/definitions/echo";
 import { dispatch } from "./../../chains/definitions/dispatch";
 
@@ -9,9 +10,7 @@ import { Info } from 'lucide-react';
 
 export default function Home() {
 
-    const icm_messenger = "0x253b2784c75e510dd0ff1da844684a1ac0aa5fcf";
-
-    const chains = [avalanche, avalancheFuji, echo, dispatch];
+    const chains = [avalanche, fuji, echo, dispatch];
 
     const tokens = [
         {
@@ -128,7 +127,7 @@ export default function Home() {
                 {/* ICTT Example */}
                 <div className="col-span-12 flows-bg w-full h-screen">
                     <div className="flex flex-col w-full h-full justify-center items-center gap-4">
-                        <ICTT icm_messenger={icm_messenger} tokens={tokens} token_in="0x8D6f0E153B1D4Efb46c510278Db3678Bb1Cc823d" source_chain_id={43113} destination_chain_id={173750}></ICTT>
+                        <ICTT tokens={tokens} token_in="0x8D6f0E153B1D4Efb46c510278Db3678Bb1Cc823d" source_chain_id={43113} destination_chain_id={173750}></ICTT>
                         <a className="flex items-center gap-2 text-white hover:underline" href="https://academy.avax.network/course/interchain-token-transfer" target="_blank">
                             <Info size={16} />
                             <p className="text-xs">What is ICTT?</p>

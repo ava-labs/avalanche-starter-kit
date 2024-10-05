@@ -19,5 +19,5 @@ export const echo = defineChain({
     },
     // Custom variables
     iconUrl: "/chains/logo/173750.png",
-    blockchain_id_hex: "0x1278d1be4b987e847be3465940eb5066c4604a7fbd6e086900823597d81af4c1"
+    icm_registry: "0xF86Cb19Ad8405AEFa7d09C778215D2Cb6eBfB228"
 });
