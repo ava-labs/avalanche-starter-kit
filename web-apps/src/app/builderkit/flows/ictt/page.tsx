@@ -1,6 +1,7 @@
 "use client"
 
-import { avalanche, avalancheFuji } from "wagmi/chains";
+import { avalanche } from "wagmi/chains";
+import { fuji } from "./../../chains/definitions/fuji";
 import { echo } from "./../../chains/definitions/echo";
 import { dispatch } from "./../../chains/definitions/dispatch";
 
@@ -9,7 +10,7 @@ import { Info } from 'lucide-react';
 
 export default function Home() {
 
-    const chains = [avalanche, avalancheFuji, echo, dispatch];
+    const chains = [avalanche, fuji, echo, dispatch];
 
     const tokens = [
         {
@@ -31,14 +32,15 @@ export default function Home() {
         },
         {
             address: "0x8D6f0E153B1D4Efb46c510278Db3678Bb1Cc823d",
-            name: "TOK",
-            symbol: "TOK",
+            name: "TOK.e",
+            symbol: "TOK.e",
             decimals: 18,
             chain_id: 173750,
             supports_ictt: true,
             is_transferer: true,
             mirrors: [
                 {
+                    home: true,
                     address: "0x8D6f0E153B1D4Efb46c510278Db3678Bb1Cc823d",
                     transferer: "0xD63c60859e6648b20c38092cCceb92c5751E32fF",
                     chain_id: 43113,

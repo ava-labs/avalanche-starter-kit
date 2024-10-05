@@ -18,5 +18,6 @@ export const dispatch = defineChain({
         default: { name: 'Explorer', url: 'https://subnets-test.avax.network/dispatch' },
     },
     // Custom variables
-    iconUrl: "/chains/logo/779672.png"
+    iconUrl: "/chains/logo/779672.png",
+    icm_registry: "0xF86Cb19Ad8405AEFa7d09C778215D2Cb6eBfB228"
 });
