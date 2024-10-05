@@ -19,7 +19,7 @@
     "viem": "2.x",
     "wagmi": "^2.12.11",
     "zod": "^3.23.8",
-    "@0xstt/avalanche-builderkit": "^0.0.3"
+    "@0xstt/avalanche-builderkit": "^0.0.4"
   },
   "devDependencies": {
     "@types/node": "^20",
