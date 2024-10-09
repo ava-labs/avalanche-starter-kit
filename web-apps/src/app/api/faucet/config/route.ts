@@ -12,7 +12,6 @@ export async function GET() {
         chains: fauced_supported_chains.map((c: any) => {
             const { id, blockExplorers, faucet } = c;
             const pk = process.env[`PK_${id}`];
-            console.log(process.env);
             if (pk === undefined) {
                 return;
             }
