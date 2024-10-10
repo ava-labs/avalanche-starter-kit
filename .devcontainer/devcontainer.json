@@ -21,7 +21,8 @@
 		"AVALANCHE_CLI_GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
 		"FUNDED_ADDRESS": "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC",
 		"TELEPORTER_REGISTRY_C_CHAIN": "0x17aB05351fC94a1a67Bf3f56DdbB941aE6c63E25",
-		"C_CHAIN_BLOCKCHAIN_ID_HEX": "0x31233cae135e3974afa396e90f465aa28027de5f97f729238c310d2ed2f71902"
+		"C_CHAIN_BLOCKCHAIN_ID_HEX": "0x31233cae135e3974afa396e90f465aa28027de5f97f729238c310d2ed2f71902",
+		"PK_43113": "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027"
 	},
 	"postCreateCommand": {
 		"init-git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
