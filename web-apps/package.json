@@ -19,7 +19,7 @@
     "viem": "2.x",
     "wagmi": "^2.12.11",
     "zod": "^3.23.8",
-    "@0xstt/avalanche-builderkit": "^0.0.6",
+    "@0xstt/builderkit": "^0.0.1",
     "lru-cache": "^11.0.1"
   },
   "devDependencies": {
