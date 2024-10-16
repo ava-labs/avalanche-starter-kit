@@ -1,9 +1,9 @@
 "use client"
 
-import { ICTT, PoweredByAvalanche, Web3Provider } from "@0xstt/avalanche-builderkit";
+import { ICTT, PoweredByAvalanche, Web3Provider } from "@0xstt/builderkit";
 import { Info } from 'lucide-react';
 
-import { CHAINS, TOKENS } from "./../../constants";
+import { CHAINS, TOKENS } from "./../constants";
 
 export default function Home() {
 

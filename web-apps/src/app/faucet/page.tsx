@@ -1,7 +1,7 @@
 "use client"
 
-import { Faucet, PoweredByAvalanche, Web3Provider } from "@0xstt/avalanche-builderkit";
-import { CHAINS, TOKENS } from "./../../constants";
+import { Faucet, PoweredByAvalanche, Web3Provider } from "@0xstt/builderkit";
+import { CHAINS, TOKENS } from "./../constants";
 
 export default function Home() {
 
