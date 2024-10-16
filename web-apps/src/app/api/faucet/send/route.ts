@@ -1,4 +1,4 @@
-import { CHAINS } from "./../../../builderkit/constants";
+import { CHAINS } from "./../../../constants";
 import { NextRequest, NextResponse } from "next/server";
 import { Chain, erc20Abi, isAddress, toHex } from "viem";
 import { ethers, Wallet } from "ethers";

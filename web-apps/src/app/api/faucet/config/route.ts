@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import {
     CHAINS
-} from './../../../builderkit/constants'
+} from './../../../constants'
 
 import { Wallet } from "ethers";
 
