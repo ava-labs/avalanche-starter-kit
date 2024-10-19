@@ -16,8 +16,13 @@
 		"C_CHAIN_BLOCKCHAIN_ID_HEX": "0x31233cae135e3974afa396e90f465aa28027de5f97f729238c310d2ed2f71902",
 		"PK_43113": "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027"
 	},
-	"postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive",
-	"postStartCommand": "git submodule update --recursive && avalanche config metrics enable",
+	"postCreateCommand": {
+		"init-git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
+	},
+	"postStartCommand": {
+		"update-git-submodules": "git submodule update --recursive",
+		"enable-avalanche-cli-metrics": "avalanche config metrics enable"
+	},
 	"forwardPorts": [
 		3000,
 		9650,
