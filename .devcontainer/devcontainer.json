@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
 	"name": "Avalanche Starter Kit",
-	"image": "ghcr.io/owenwahlgren/avalanche-starter-kit",
+	"image": "ghcr.io/owenwahlgren/avalanche-starter-kit:latest",
 	"runArgs": [
 		"--network=host"
 	],
