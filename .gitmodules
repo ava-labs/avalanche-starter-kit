@@ -11,3 +11,6 @@
 [submodule "lib/avalanche-interchain-token-transfer"]
 	path = lib/avalanche-interchain-token-transfer
 	url = https://github.com/ava-labs/avalanche-interchain-token-transfer
+[submodule "lib/chainlink"]
+	path = lib/chainlink
+	url = https://github.com/smartcontractkit/chainlink
