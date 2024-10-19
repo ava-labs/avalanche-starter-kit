@@ -1,9 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
 	"name": "Avalanche Starter Kit",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
+	"image": "owenwahlgren/avalanche-starter-kit",
 	"runArgs": [
 		"--network=host"
 	],
