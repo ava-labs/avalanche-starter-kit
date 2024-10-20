@@ -1,3 +1,93 @@
+# Interchain Connection between Fuji C-Chain and MaGGA L1 Chain
+
+Important variables:
+
+```
+
+MaGGA_BLOCKCHAIN_ID = 0x02f8b60b4d4070cf62e67802fe6532d4fcfc6582b4048d040ed6cfc7247d86d8
+MaGGA_RPC = "https://subnets.avax.network/gaming/testnet/rpc"
+
+FUJI_C_BLOCKCHAIN_ID = 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+FUJI_RPC = "https://api.avax-test.network/ext/bc/C/rpc"
+
+```
+
+
+1. Set up privat the privat key of your crypto wallet:
+
+```
+export PK=YOUR_PRIVATE_KEY
+```
+
+
+2. Deploy Sender Contract on C chain
+
+```
+forge create --rpc-url fuji-c --private-key $PK contracts/MaGGA/senderMaGGA.sol:SenderOnCChain
+```
+
+
+The output should look like this:
+
+```
+[⠊] Compiling...
+[⠢] Compiling 2 files with Solc 0.8.18
+[⠆] Solc 0.8.18 finished in 158.51ms
+Compiler run successful!
+Deployer: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+Deployed to: 0xAAASENDER_CONTRACT_ADDRESS888
+Transaction hash: 0x48a1ffaa8aa8011f842147a908ff35a1ebfb75a5a07eb37ae96a4cc8d7feafd7
+```
+
+3. If you are using Avacloud, authorize the Sender Contract on your L1 Blockchain.
+
+4. Save the adress where the smart constract was deployed to:
+
+```
+export SENDER_CONTRACT_ADDRESS=0xAAASENDER_CONTRACT_ADDRESS888
+```
+
+
+5. Deploy Receiver Contract on MaGGA chain:
+
+```
+forge create --rpc-url MaGGA --private-key $PK contracts/MaGGA/receiverMaGGA.sol:ReceiverOnSubnet
+```
+
+The output should look like this:
+
+```
+[⠊] Compiling...
+[⠒] Compiling 2 files with Solc 0.8.18
+[⠢] Solc 0.8.18 finished in 81.53ms
+Compiler run successful!
+Deployer: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+Deployed to: 0xYYYRECEIVER_CONTRACT_ADDRESS444
+Transaction hash: 0xcde7873e9e3c68fb00a2ad6644dceb64a01a41941da46de5a0f559d6d70a1638
+```
+
+6. If you are using Avacloud, authorize the Sender Contract on your L1 Blockchain.
+
+7. Save the adress where the smart constract was deployed to, executing the :
+
+```
+export RECEIVER_CONTRACT_ADDRESS=0xYYYRECEIVER_CONTRACT_ADDRESS444
+```
+
+8. Send Transaction from C-Chain to MaGGA L1 Chain:
+
+```
+cast send --rpc-url MaGGA --private-key $PK $SENDER_CONTRACT_ADDRESS "sendMessage(address,string)" $RECEIVER_CONTRACT_ADDRESS "Hello MaGGA!"
+```
+
+9. Read variable on MaGGA L1 Chain to make sure, that the right message was received:
+
+```
+cast call --rpc-url MaGGA $RECEIVER_CONTRACT_ADDRESS "lastMessage()(string)"
+```
+
+
+
 # Avalanche Starter Kit
 
 This starter kit will get you started with developing solidity smart contract dApps on the C-Chain or on an Avalanche L1. It provides all tools to build cross-L1 dApps using Teleporter. It includes:
