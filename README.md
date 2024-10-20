@@ -12,8 +12,9 @@ FUJI_RPC = "https://api.avax-test.network/ext/bc/C/rpc"
 
 ```
 
+# Create simple interchain messaging between Fuji C-Chain and MaGGA L1 Chain
 
-1. Set up privat the privat key of your crypto wallet:
+1. Set up privat the privat key of your crypto wallet and save it as an environmental variable:
 
 ```
 export PK=YOUR_PRIVATE_KEY
@@ -84,6 +85,108 @@ cast send --rpc-url MaGGA --private-key $PK $SENDER_CONTRACT_ADDRESS "sendMessag
 
 ```
 cast call --rpc-url MaGGA $RECEIVER_CONTRACT_ADDRESS "lastMessage()(string)"
+```
+
+
+# Create simple token creation in MaGGA L1 Chain depending on a message from the Fuji C-Chain
+
+1. If you do not have already set up a privat key, please refer to Step 1 of "Create simple interchain messaging between Fuji C-Chain and MaGGA L1 Chain":
+
+```
+export PK=YOUR_PRIVATE_KEY
+```
+
+
+2. Deploy the token creation contract on Fuji C-chain:
+
+```
+forge create --rpc-url fuji-c --private-key $PK contracts/MaGGA/createToken.sol:MyToken
+```
+
+
+The output should look like this:
+
+```
+[⠊] Compiling...
+[⠢] Compiling 2 files with Solc 0.8.18
+[⠆] Solc 0.8.18 finished in 158.51ms
+Compiler run successful!
+Deployer: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+Deployed to: 0xAAATOKEN_CREATION_CONTRACT_ADDRESS888
+Transaction hash: 0x48a1ffaa8aa8011f842147a908ff35a1ebfb75a5a07eb37ae96a4cc8d7feafd7
+```
+
+3. If you are using Avacloud, authorize the token creation smart contract (i.e. 0xAAATOKEN_CREATION_CONTRACT_ADDRESS888) on your L1 Blockchain.
+
+4. Save the adress where the token creation smart contract was deployed to as an environmental variable:
+
+```
+export TOKEN_CREATION_CONTRACT_ADDRESS=0xAAATOKEN_CREATION_CONTRACT_ADDRESS888
+```
+
+5. Deploy Sender Contract on C chain
+
+```
+forge create --rpc-url fuji-c --private-key $PK contracts/MaGGA/sendAmount.sol:SendAmountOnCChain
+```
+
+
+The output should look like this:
+
+```
+[⠊] Compiling...
+[⠢] Compiling 2 files with Solc 0.8.18
+[⠆] Solc 0.8.18 finished in 158.51ms
+Compiler run successful!
+Deployer: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+Deployed to: 0xAAASENDER_CONTRACT_ADDRESS888
+Transaction hash: 0x48a1ffaa8aa8011f842147a908ff35a1ebfb75a5a07eb37ae96a4cc8d7feafd7
+```
+
+6. If you are using Avacloud, authorize the sender smart contract (i.e. 0xAAASENDER_CONTRACT_ADDRESS888) on your L1 Blockchain.
+
+7. Save the adress where the sender smart contract was deployed to as an environmental variable:
+
+```
+export SENDER_CONTRACT_ADDRESS=0xAAASENDER_CONTRACT_ADDRESS888
+```
+
+8. Deploy Receiver Contract on MaGGA chain:
+
+```
+forge create --rpc-url MaGGA --private-key $PK contracts/MaGGA/receiveMaGGATokens.sol:ReceiveMaGGATokens
+```
+
+The output should look like this:
+
+```
+[⠊] Compiling...
+[⠒] Compiling 2 files with Solc 0.8.18
+[⠢] Solc 0.8.18 finished in 81.53ms
+Compiler run successful!
+Deployer: 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+Deployed to: 0xYYYRECEIVER_CONTRACT_ADDRESS444
+Transaction hash: 0xcde7873e9e3c68fb00a2ad6644dceb64a01a41941da46de5a0f559d6d70a1638
+```
+
+9. If you are using Avacloud, authorize the Receiver Contract (i.e. 0xYYYRECEIVER_CONTRACT_ADDRESS444) on your L1 Blockchain.
+
+10. Save the adress where the receiver smart constract was deployed to as an environmental varaible:
+
+```
+export RECEIVER_CONTRACT_ADDRESS=0xYYYRECEIVER_CONTRACT_ADDRESS444
+```
+
+11. Send Transaction from C-Chain to MaGGA L1 Chain:
+
+```
+cast send --rpc-url MaGGA --private-key $PK $SENDER_CONTRACT_ADDRESS "sendAmount(address,uint)" $RECEIVER_CONTRACT_ADDRESS 100
+```
+
+12. Read variable on MaGGA L1 Chain to make sure, that the right message was received:
+
+```
+cast call --rpc-url MaGGA $RECEIVER_CONTRACT_ADDRESS "lastAmount()(uint)"
 ```
 
 
