@@ -1,4 +1,4 @@
-# Tutorial: Communication between Smart Contracts on Avalanche
+# Tutorial: Communication between Smart Contracts on different L1 blockchains of Avalanche
 
 ## Objective
 This tutorial outlines how to create a Layer 1 (L1) on Avacloud, deploy smart contracts that communicate with each other, and validate functionality using the Teleporter on Avalanche.
@@ -50,8 +50,8 @@ Step 1: Access Avacloud
 2. Deploy the contract on L1 A using Foundry:
 
    ```bash
-   forge create --rpc-url <L1_A_RPC_URL> --private-key $PK contracts/uchuva/receiver.sol:WinnerContract
-   export RECEIVER=<ADDRESS_OF_WINNER_CONTRACT>
+   forge create --rpc-url <L1_A_RPC_URL> --private-key $PK contracts/interchain-messaging/send-recive-unidirectional-game-result/receiverResultGame.sol:ReceiverWinner
+   export RECEIVER=<ADDRESS_OF_RECEIVER_WINNER>
    ```
 
 ## 4. Create, Deploy, and Obtain Address of the Smart Contract that Sends on L1 B
@@ -113,12 +113,12 @@ Step 1: Access Avacloud
 2. Deploy the contract on L1 B using Foundry:
 
    ```bash
-   forge create --rpc-url <L1_B_RPC_URL> --private-key $PK contracts/uchuva/sender.sol:SimpleGame
-   export SENDER=<ADDRESS_OF_SIMPLE_GAME>
+   forge create --rpc-url <L1_B_RPC_URL> --private-key $PK contracts/interchain-messaging/send-recive-unidirectional-game-result/senderGame.sol:SenderGame
+   export SENDER=<ADDRESS_OF_SENDER_GAME>
    ```
 
 ## 5. Execute the Sending Smart Contract
-To start the game in the `SimpleGame` contract on L1 B:
+To start the game in the `SenderGame` contract on L1 B:
 
 ```bash
 export PLAYER1=<ADDRESS_OF_PLAYER_1>
@@ -127,7 +127,7 @@ cast send --rpc-url <L1_B_RPC_URL> --private-key $PK $SENDER "playGame(address, 
 ```
 
 ## 6. Execute the Receiving Smart Contract and Validate
-To verify that the `WinnerContract` has correctly received the winner's address:
+To verify that the `ReceiverWinner` has correctly received the winner's address:
 
 ```bash
 cast call --rpc-url <L1_A_RPC_URL> $RECEIVER "viewWinner()(address)"
@@ -143,4 +143,4 @@ https://chaingo.uchuvalabs.xyz
 
 
 ## Conclusion
-This tutorial provides a step-by-step approach to establishing communication between smart contracts on Avalanche using Avacloud. Make sure to adjust the addresses and specific configurations according to your implementation and environment. Good luck with your development!
+This tutorial provides a step-by-step approach to establishing communication between smart contracts on different L1 blockchains of Avalanche using Avacloud. Make sure to adjust the addresses and specific configurations according to your implementation and environment. Good luck with your development!
