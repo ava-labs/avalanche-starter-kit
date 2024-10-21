@@ -5,3 +5,4 @@ forge-std/=lib/forge-std/src/
 @avalabs/subnet-evm-contracts@1.2.0/=lib/teleporter/contracts/lib/subnet-evm/contracts/
 @teleporter/=lib/teleporter/contracts/src/Teleporter/
 @avalanche-interchain-token-transfer/=lib/avalanche-interchain-token-transfer/contracts/src/
+@chainlink/=lib/chainlink/contracts/src/v0.8/
