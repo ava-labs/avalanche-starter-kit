@@ -1,4 +1,4 @@
-FROM avaplatform/avalanchego:v1.12.0-initial-poc.5 as avalanchego
+FROM avaplatform/avalanchego:v1.12.0-initial-poc.6 as avalanchego
 FROM avaplatform/avalanche-cli:v1.8.0-rc0 as avalanche-cli
 FROM avaplatform/awm-relayer:latest as awm-relayer
 FROM --platform=linux/amd64 ghcr.io/foundry-rs/foundry:latest as foundry
