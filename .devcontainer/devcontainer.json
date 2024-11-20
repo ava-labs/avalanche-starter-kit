@@ -54,6 +54,14 @@
 			"label": "Node-5"
 		}
 	},
+	"codespaces": {
+		"ports": [
+			{
+				"port": 9650,
+				"visibility": "public"
+			}
+		]
+	},
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
