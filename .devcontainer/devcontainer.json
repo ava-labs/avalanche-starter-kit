@@ -34,12 +34,10 @@
 	],
 	"portsAttributes": {
 		"3000": {
-			"label": "Frontend",
-			"visibility": "public"
+			"label": "Frontend"
 		},
 		"9650": {
-			"label": "Node-1",
-			"visibility": "public"
+			"label": "Node-1"
 		},
 		"9652": {
 			"label": "Node-2"
@@ -53,14 +51,6 @@
 		"9658": {
 			"label": "Node-5"
 		}
-	},
-	"codespaces": {
-		"ports": [
-			{
-				"port": 9650,
-				"visibility": "public"
-			}
-		]
 	},
 	// Configure tool-specific properties.
 	"customizations": {
