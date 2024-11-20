@@ -23,7 +23,7 @@
 	"postStartCommand": {
 		"update-git-submodules": "git submodule update --recursive",
 		"enable-avalanche-cli-metrics": "avalanche config metrics enable",
-		"configure-ports": "bash .devcontainer/configure-ports.sh"
+		"configure-ports": "chmod +x .devcontainer/configure-ports.sh && .devcontainer/configure-ports.sh"
 	},
 	"features": {
 		"ghcr.io/devcontainers/features/github-cli:1": {}
