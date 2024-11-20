@@ -34,10 +34,12 @@
 	],
 	"portsAttributes": {
 		"3000": {
-			"label": "Frontend"
+			"label": "Frontend",
+			"visibility": "public"
 		},
 		"9650": {
-			"label": "Node-1"
+			"label": "Node-1",
+			"visibility": "public"
 		},
 		"9652": {
 			"label": "Node-2"
