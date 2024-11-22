@@ -11,3 +11,6 @@
 [submodule "lib/avalanche-interchain-token-transfer"]
 	path = lib/avalanche-interchain-token-transfer
 	url = https://github.com/ava-labs/avalanche-interchain-token-transfer
+[submodule "lib/etna-devnet-resources"]
+	path = lib/etna-devnet-resources
+	url = https://github.com/ava-labs/etna-devnet-resources

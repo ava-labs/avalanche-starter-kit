@@ -17,3 +17,5 @@ out/
 .pnp.*
 
 yarn.lock
+
+lib/etna-devnet-resources/manual_etna_evm/data/poa_validator_manager_owner_key.txt
