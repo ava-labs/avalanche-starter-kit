@@ -1,0 +1,40 @@
+{
+    "info-api": {
+      "base-url": "https://miniature-pancake-x9grjv7j699hpv7q-9650.app.github.dev"
+    },
+    "p-chain-api": {
+      "base-url": "https://miniature-pancake-x9grjv7j699hpv7q-9650.app.github.dev"
+    },
+    "source-blockchains": [
+      {
+        "subnet-id": "11111111111111111111111111111111LpoYY",
+        "blockchain-id": "NeA134STyTVwife7gYeNQ6Hwi5GPGC2X7aUFvWsnusnpM2do6",
+        "vm": "evm",
+        "rpc-endpoint": {
+          "base-url": "https://miniature-pancake-x9grjv7j699hpv7q-9650.app.github.dev/ext/bc/C/rpc"
+        },
+        "ws-endpoint": {
+          "base-url": "wss://miniature-pancake-x9grjv7j699hpv7q-9650.app.github.dev/ext/bc/C/ws"
+        },
+        "message-contracts": {
+          "0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf": {
+            "message-format": "teleporter",
+            "settings": {
+              "reward-address": "0xbAE6Ff34d6Da45128C1ddFEDA008e55A328f5665"
+            }
+          }
+        }
+      }
+    ],
+    "destination-blockchains": [
+      {
+        "subnet-id": "26eqgD4Kt1MvTKXC9BDjEwBAfhcBcHCKj2EXjR2UuFpSWoAHhw",
+        "blockchain-id": "rqrMS36Syo6B162C7BCVUEs8ZH5SmnWwweQ8zWCtVYxWmd5ws",
+        "vm": "evm",
+        "rpc-endpoint": {
+          "base-url": "https://miniature-pancake-x9grjv7j699hpv7q-9650.app.github.dev/ext/bc/rqrMS36Syo6B162C7BCVUEs8ZH5SmnWwweQ8zWCtVYxWmd5ws/rpc"
+        },
+        "account-private-key": "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027"
+      }
+    ]
+  }

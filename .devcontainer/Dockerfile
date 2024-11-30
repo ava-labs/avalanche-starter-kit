@@ -1,10 +1,10 @@
 FROM avaplatform/avalanche-cli:v2.0.0 AS avalanche-cli
-FROM avaplatform/awm-relayer:latest AS awm-relayer
+FROM avaplatform/icm-relayer:v1.5.2-rc.1 AS icm-relayer
 FROM --platform=linux/amd64 ghcr.io/foundry-rs/foundry:latest AS foundry
 FROM mcr.microsoft.com/devcontainers/base
 
 COPY --from=avalanche-cli /avalanche /usr/local/bin/avalanche
-COPY --from=awm-relayer /usr/bin/awm-relayer /usr/local/bin/awm-relayer
+COPY --from=icm-relayer /usr/bin/icm-relayer /usr/local/bin/icm-relayer
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 COPY --from=foundry /usr/local/bin/cast /usr/local/bin/cast
 COPY --from=foundry /usr/local/bin/anvil /usr/local/bin/anvil
