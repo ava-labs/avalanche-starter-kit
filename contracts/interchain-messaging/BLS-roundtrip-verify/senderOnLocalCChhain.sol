@@ -12,7 +12,12 @@ import "./VerifierActions.sol";
 contract SenderOnLocalCChain is ITeleporterReceiver {
     ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
 
-    bool public verificationResult;
+    struct VerificationResult {
+        bool isSingle;
+        bool verified;
+    }
+
+    VerificationResult public result;
 
     function sendSingleVerifyMessage(
         address destinationAddress,
@@ -56,9 +61,9 @@ contract SenderOnLocalCChain is ITeleporterReceiver {
         // Only the Teleporter receiver can deliver a message.
         require(msg.sender == address(messenger), "SenderOnCChain: unauthorized TeleporterMessenger");
 
-        // Store the message.
-        bool result = abi.decode(message, (bool));
-        verificationResult = result;
+        (bool isSingle, bool verified) = abi.decode(message, (bool, bool));
+
+        result = VerificationResult(isSingle, verified);
     }
 
     function encodeSingleVerify(bytes calldata publicKey, bytes calldata signature, string calldata message)
