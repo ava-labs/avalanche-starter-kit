@@ -7,17 +7,18 @@ pragma solidity ^0.8.18;
 
 import "@teleporter/ITeleporterMessenger.sol";
 import "@teleporter/ITeleporterReceiver.sol";
+import "./VerifierActions.sol";
 
 contract SenderOnLocalCChain is ITeleporterReceiver {
     ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
 
     bool public verificationResult;
 
-    function sendMessage(
+    function sendSingleVerifyMessage(
         address destinationAddress,
-        string calldata message,
+        bytes calldata publicKey,
         bytes calldata signature,
-        bytes calldata publicKey
+        string calldata message
     ) external {
         messenger.sendCrossChainMessage(
             TeleporterMessageInput({
@@ -27,7 +28,26 @@ contract SenderOnLocalCChain is ITeleporterReceiver {
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 200000,
                 allowedRelayerAddresses: new address[](0),
-                message: abi.encode(message, signature, publicKey)
+                message: encodeSingleVerify(publicKey, signature, message)
+            })
+        );
+    }
+
+    function sendAggregateVerifyMessage(
+        address destinationAddress,
+        bytes calldata publicKey,
+        bytes calldata signature,
+        string calldata message
+    ) external {
+        messenger.sendCrossChainMessage(
+            TeleporterMessageInput({
+                // blockchainID of Nico layer 1
+                destinationBlockchainID: 0x5a5a8cd30d69c017c454fbadd0c0ebc6c763b0017070b7a38aa227cd616ecc34,
+                destinationAddress: destinationAddress,
+                feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
+                requiredGasLimit: 200000,
+                allowedRelayerAddresses: new address[](0),
+                message: encodeAggregateVerify(publicKey, signature, message)
             })
         );
     }
@@ -39,5 +59,23 @@ contract SenderOnLocalCChain is ITeleporterReceiver {
         // Store the message.
         bool result = abi.decode(message, (bool));
         verificationResult = result;
+    }
+
+    function encodeSingleVerify(bytes calldata publicKey, bytes calldata signature, string calldata message)
+        public
+        pure
+        returns (bytes memory)
+    {
+        bytes memory paramsData = abi.encode(publicKey, signature, message);
+        return abi.encode(VerifierAction.singleVerify, paramsData);
+    }
+
+    function encodeAggregateVerify(bytes calldata publicKey, bytes calldata signature, string calldata message)
+        public
+        pure
+        returns (bytes memory)
+    {
+        bytes memory paramsData = abi.encode(publicKey, signature, message);
+        return abi.encode(VerifierAction.aggregateVerify, paramsData);
     }
 }
