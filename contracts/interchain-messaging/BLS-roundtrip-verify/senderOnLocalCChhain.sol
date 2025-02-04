@@ -38,10 +38,12 @@ contract SenderOnLocalCChain is ITeleporterReceiver {
         );
     }
 
+    // This is kind of dumb since the Verify function on the layer one takes in the same params for single or aggregated values
+    // so we could just use one sendMessage, but for the case of showcasing how multiple functions would work
     function sendAggregateVerifyMessage(
         address destinationAddress,
-        bytes calldata publicKey,
-        bytes calldata signature,
+        bytes[] calldata publicKeys,
+        bytes[] calldata signatures,
         string calldata message
     ) external {
         messenger.sendCrossChainMessage(
@@ -52,7 +54,7 @@ contract SenderOnLocalCChain is ITeleporterReceiver {
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 200000,
                 allowedRelayerAddresses: new address[](0),
-                message: encodeAggregateVerify(publicKey, signature, message)
+                message: encodeAggregateVerify(publicKeys, signatures, message)
             })
         );
     }
@@ -75,12 +77,12 @@ contract SenderOnLocalCChain is ITeleporterReceiver {
         return abi.encode(VerifierAction.singleVerify, paramsData);
     }
 
-    function encodeAggregateVerify(bytes calldata publicKey, bytes calldata signature, string calldata message)
+    function encodeAggregateVerify(bytes[] calldata publicKeys, bytes[] calldata signatures, string calldata message)
         public
         pure
         returns (bytes memory)
     {
-        bytes memory paramsData = abi.encode(publicKey, signature, message);
+        bytes memory paramsData = abi.encode(publicKeys, signatures, message);
         return abi.encode(VerifierAction.aggregateVerify, paramsData);
     }
 }
