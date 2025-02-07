@@ -7,7 +7,7 @@ evm_version = "shanghai"
 
 [rpc_endpoints]
 local-c = "http://localhost:9650/ext/bc/C/rpc"
-myblockchain = "http://localhost:9650/ext/bc/myblockchain/rpc"
+Nico = "http://localhost:9650/ext/bc/Nico/rpc"
 fuji-c = "https://api.avax-test.network/ext/bc/C/rpc"
 dispatch = "https://subnets.avax.network/dispatch/testnet/rpc"
 mysubnet = "http://localhost:9650/ext/bc/mysubnet/rpc"
