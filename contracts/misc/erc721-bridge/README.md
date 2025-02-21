@@ -25,7 +25,7 @@ Note: This implementation currently does not support chain-hopping for ERC721 to
 An end-to-end test demonstrating the use of the generic ERC721 token bridge contracts can be found in [here](/tests/flows/erc721_native_token_bridge.go). This test implements the following flow and checks that each step is successful:
 1. An example "native" [ERC721](/contracts/src/Mocks/ExampleERC721.sol) token is deployed on subnet A
 2. The [ERC721Bridge](/contracts/src/CrossChainApplications/examples/ERC721Bridge/ERC721Bridge.sol) contract is deployed on subnets A and B.
-4. Teleporter message is sent from subnet A to B to create a new [BridgeNFT](/contracts/src/CrossChainApplications/examples/ERC721Bridge/BridgeNFT.sol) contract instance to represent the native ERC721 token on subnet B.
+4. Teleporter message is sent from subnet A to B to create a new [BridgeNFT](/contracts/misc/erc721-bridge/BridgeNFT.sol) contract instance to represent the native ERC721 token on subnet B.
 5. An NFT is minted on subnet A to the user address.
 6. ERC721Bridge on subnet A is approved as operator of the NFT.
 7. `bridgeToken` is called on subnet A to lock the NFT and bridge it to subnet B.
