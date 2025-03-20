@@ -1,4 +1,4 @@
-FROM avaplatform/avalanche-cli:latest AS avalanche-cli
+FROM avaplatform/avalanche-cli:v1.8.4 AS avalanche-cli
 FROM avaplatform/awm-relayer:latest AS awm-relayer
 FROM --platform=linux/amd64 ghcr.io/foundry-rs/foundry:latest AS foundry
 FROM mcr.microsoft.com/devcontainers/base
