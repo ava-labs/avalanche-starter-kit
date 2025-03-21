@@ -65,7 +65,7 @@ anotherblockchain = "http://localhost:9650/ext/bc/BASE58_BLOCKCHAIN_ID/rpc"
 - [cross-chain-token-swaps](https://academy.avax.network/course/interchain-token-transfer/13-cross-chain-token-swaps/07-exchange-contract)
 
 ### Misc
-- [creating-contracts](https://github.com/ava-labs/avalanche-starter-kit/blob/main/README.md)
+- [creating-contracts](https://github.com/ava-labs/avalanche-starter-kit/tree/main/contracts/misc/creating-contracts)
 - [erc721-bridge](contracts/misc/erc721-bridge/README.md)
 
 
