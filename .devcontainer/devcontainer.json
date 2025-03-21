@@ -26,7 +26,8 @@
 		"configure-ports": "chmod +x .devcontainer/configure-ports.sh && .devcontainer/configure-ports.sh"
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/github-cli:1": {}
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:1": {}
 	},
 	"forwardPorts": [
 		3000,
