@@ -1,10 +1,6 @@
-FROM avaplatform/avalanche-cli:v1.8.4 AS avalanche-cli
-FROM avaplatform/awm-relayer:latest AS awm-relayer
 FROM --platform=linux/amd64 ghcr.io/foundry-rs/foundry:latest AS foundry
 FROM mcr.microsoft.com/devcontainers/base
 
-COPY --from=avalanche-cli /avalanche /usr/local/bin/avalanche
-COPY --from=awm-relayer /usr/bin/awm-relayer /usr/local/bin/awm-relayer
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 COPY --from=foundry /usr/local/bin/cast /usr/local/bin/cast
 COPY --from=foundry /usr/local/bin/anvil /usr/local/bin/anvil
