@@ -4,9 +4,6 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-	"runArgs": [
-		"--network=host"
-	],
 	"remoteEnv": {
 		"PATH": "${containerEnv:PATH}:/usr/local/bin/",
 		"PK": "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027",
@@ -18,27 +15,8 @@
 	"postCreateCommand": {
 		"init-git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
 	},
-	"postStartCommand": {
-		"update-git-submodules": "git submodule update --recursive"
-	},
-	"features": {
-		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/devcontainers/features/docker-in-docker:1": {}
-	},
-	"forwardPorts": [
-		3000
-	],
-	"portsAttributes": {
-		"3000": {
-			"label": "Frontend"
-		}
-	},
-	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
-			"settings": {
-				"git.autofetch": true
-			},
 			"extensions": [
 				"juanblanco.solidity"
 			]

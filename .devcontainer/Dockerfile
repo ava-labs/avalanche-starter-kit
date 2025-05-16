@@ -12,11 +12,9 @@ COPY --from=foundry /usr/local/bin/forge /home/vscode/.foundry/bin/forge
 # Switch to root user to install system packages
 USER root
 
-# Install Git and other dependencies
+# Install Git
 RUN apt-get update && apt-get install -y \
     git \
-    curl \
-    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Ensure vscode owns its home directory
@@ -27,25 +25,3 @@ ENV HOME=/home/vscode
 
 # Switch back to vscode user
 USER vscode
-
-# Install nvm, Node.js, and TypeScript
-ENV NVM_DIR=/home/vscode/.nvm
-ENV NODE_VERSION=23.0.0
-
-# Install nvm and Node.js
-RUN mkdir -p $NVM_DIR \
-    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash \
-    && . $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION
-
-# Update PATH for nvm and Node.js
-ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-# Install TypeScript globally
-RUN npm install -g typescript
-
-# Ensure Node.js and npm are accessible in future shells
-RUN echo 'export NVM_DIR="$HOME/.nvm"' >> $HOME/.bashrc \
-    && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc \
-    && echo 'export PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH"' >> $HOME/.bashrc
