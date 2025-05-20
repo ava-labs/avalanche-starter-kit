@@ -1,81 +1,108 @@
-# Avalanche Smart Contract Development Kit
+# Avalanche Starter Kit
 
-This development kit provides a minimal setup for developing and deploying Solidity smart contracts on Avalanche networks using Foundry. It includes:
+This repository contains starter code for building cross-chain applications on Avalanche using the Teleporter protocol.
 
-- **Foundry**:
-  - Forge: Compile and deploy smart contracts to Fuji Testnet
-  - Cast: Interact with deployed contracts
+## Prerequisites
 
-## Set Up
+- [Foundry](https://book.getfoundry.sh/getting-started/installation)
+- [Git](https://git-scm.com/downloads)
 
-This kit utilizes a Dev Container specification for a consistent and isolated development environment. The container includes Foundry pre-installed and configured. You can run it using GitHub Codespaces or locally using Docker and VS Code.
+## Setup
 
-### Environment Configuration
-
-1. Copy the example environment file:
+1. Clone the repository:
 ```bash
-cp .env.example .env
+git clone https://github.com/ava-labs/avalanche-starter-kit.git
+cd avalanche-starter-kit
 ```
 
-2. Edit the `.env` file with your values:
-   - `PK`: Your private key for signing transactions (for testing only)
-   - `FUNDED_ADDRESS`: Your funded address (derived from your private key)
-
-The following values come pre-configured for testing:
-   - `TELEPORTER_REGISTRY_C_CHAIN`: The Teleporter registry address
-   - `C_CHAIN_BLOCKCHAIN_ID_HEX`: The C-Chain blockchain ID
-
-### Run on Github Codespace
-
-You can run directly on Github by clicking **Code**, switching to the **Codespaces** tab and clicking **Create codespace on main**. A new window will open with VS Code and all dependencies installed.
-
-For Codespaces, set up your environment variables in your repository:
-1. Go to your repository settings
-2. Navigate to Secrets and Variables > Codespaces
-3. Add your `PK` and `FUNDED_ADDRESS` as secrets
-
-### Run Dev Container locally with Docker
-
-To run locally, you need:
-1. [Docker](https://www.docker.com/products/docker-desktop/) installed
-2. [VS Code](https://code.visualstudio.com/) with the [Dev Container extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-
-Clone the repository and open it in VS Code. VS Code will ask you if you want to reopen the project in a container.
-
-## Using Foundry
-
-The environment is configured with RPC endpoints for Fuji testnet and Dispatch. You can find these configurations in `foundry.toml`:
-
-```toml
-[rpc_endpoints]
-fuji-c = "https://api.avax-test.network/ext/bc/C/rpc"
-dispatch = "https://subnets.avax.network/dispatch/testnet/rpc"
-```
-
-### Common Commands
-
-1. **Deploying Smart Contracts**
+2. Install dependencies:
 ```bash
-forge create --rpc-url fuji-c --private-key $PK path/to/Contract.sol:ContractName
+forge install
 ```
 
-2. **Making State-Changing Calls**
+## Wallet Management
+
+We use Foundry's built-in wallet management system for secure key handling:
+
+1. Create a new wallet:
 ```bash
-cast send --rpc-url fuji-c --private-key $PK <CONTRACT_ADDRESS> "functionName(uint256)" 123
+cast wallet new my-avalanche-wallet
 ```
+This creates a wallet stored securely in `~/.foundry/wallets/my-avalanche-wallet`
 
-3. **Making Read-Only Calls**
+2. Get your wallet address:
 ```bash
-cast call --rpc-url fuji-c <CONTRACT_ADDRESS> "viewFunction()(uint256)"
+cast wallet address my-avalanche-wallet
 ```
 
-## Contract Examples
+3. Use your wallet's private key in commands:
+```bash
+--private-key $(cast wallet private-key my-avalanche-wallet)
+```
 
-You can find example contracts in the `contracts/` directory. These contracts demonstrate various smart contract patterns and functionalities.
+## Getting Test Tokens
 
-## Security Notes
+Before deploying contracts, get test tokens from:
 
-- Never share or commit your private keys
-- Never commit your `.env` file (it's already in .gitignore)
-- Always use environment variables for sensitive data
-- For production deployments, consider using more secure key management solutions
+1. [Fuji C-Chain Faucet](https://core.app/tools/testnet-faucet/?subnet=c&token=c)
+2. [Dispatch Testnet Faucet](https://core.app/tools/testnet-faucet/?subnet=dispatch&token=dispatch)
+
+Check your balance:
+```bash
+cast balance $(cast wallet address my-avalanche-wallet) --rpc-url https://api.avax-test.network/ext/bc/C/rpc
+```
+
+## Environment Setup
+
+Create a `.env` file with the following variables:
+
+```bash
+# RPC URLs
+FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+DISPATCH_RPC_URL=https://subnets.avax.network/dispatch/testnet/rpc
+
+# Blockchain IDs
+FUJI_CHAIN_ID=43113
+DISPATCH_CHAIN_ID=0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7
+
+# Contract Addresses
+TELEPORTER_REGISTRY_FUJI=0xF86Cb19Ad8405AEFa7d09C778215D2Cb6eBfB228
+TELEPORTER_MESSENGER_DISPATCH=0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf
+```
+
+## Usage
+
+### Deploy Contracts
+
+```bash
+forge create --rpc-url $FUJI_RPC_URL \
+  --private-key $(cast wallet private-key my-avalanche-wallet) \
+  src/contracts/YourContract.sol:YourContract
+```
+
+### Send Transactions
+
+```bash
+cast send --rpc-url $FUJI_RPC_URL \
+  --private-key $(cast wallet private-key my-avalanche-wallet) \
+  $CONTRACT_ADDRESS "functionName(uint256)" 123
+```
+
+### Read Contract State
+
+```bash
+cast call --rpc-url $FUJI_RPC_URL \
+  $CONTRACT_ADDRESS "functionName()(uint256)"
+```
+
+## Important Notes
+
+1. The Teleporter Registry needs to be predeployed on Dispatch. The address will be either hardcoded or you'll need to deploy it yourself.
+2. Make sure to use the correct RPC URLs and contract addresses for your target network.
+3. Never commit your `.env` file or expose your private keys.
+
+## Learn More
+
+- [Foundry Documentation](https://book.getfoundry.sh/)
+- [Avalanche Documentation](https://docs.avax.network/)
+- [Teleporter Documentation](https://docs.avax.network/build/cross-chain/teleporter/overview)
