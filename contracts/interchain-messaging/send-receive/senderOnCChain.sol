@@ -8,7 +8,7 @@ pragma solidity ^0.8.18;
 import "@teleporter/ITeleporterMessenger.sol";
 
 contract SenderOnCChain {
-    ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
+    ITeleporterMessenger public immutable messenger = ITeleporterMessenger(0xF86Cb19Ad8405AEFa7d09C778215D2Cb6eBfB228);
 
     /**
      * @dev Sends a message to another chain.

@@ -8,7 +8,7 @@ pragma solidity ^0.8.18;
 import "@teleporter/ITeleporterMessenger.sol";
 import "@teleporter/ITeleporterReceiver.sol";
 
-contract SimpleCalculatorReceiverOnSubnet is ITeleporterReceiver {
+contract SimpleCalculatorReceiverOnDispatch is ITeleporterReceiver {
     ITeleporterMessenger public immutable teleporterMessenger =
         ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
 
@@ -17,7 +17,7 @@ contract SimpleCalculatorReceiverOnSubnet is ITeleporterReceiver {
     function receiveTeleporterMessage(bytes32, address, bytes calldata message) external {
         // Only the Teleporter receiver can deliver a message.
         require(
-            msg.sender == address(teleporterMessenger), "CalculatorReceiverOnSubnet: unauthorized TeleporterMessenger"
+            msg.sender == address(teleporterMessenger), "CalculatorReceiverOnDispatch: unauthorized TeleporterMessenger"
         );
 
         (uint256 a, uint256 b) = abi.decode(message, (uint256, uint256));

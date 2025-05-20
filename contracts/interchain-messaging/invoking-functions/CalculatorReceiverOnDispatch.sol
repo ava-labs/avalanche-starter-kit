@@ -7,9 +7,9 @@ pragma solidity ^0.8.18;
 
 import "@teleporter/ITeleporterMessenger.sol";
 import "@teleporter/ITeleporterReceiver.sol";
-import "./ExtendedCalculatorActions.sol";
+import "./CalculatorActions.sol";
 
-contract CalculatorReceiverOnSubnet is ITeleporterReceiver {
+contract CalculatorReceiverOnDispatch is ITeleporterReceiver {
     ITeleporterMessenger public immutable teleporterMessenger =
         ITeleporterMessenger(0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf);
     uint256 public result_num;
@@ -18,7 +18,7 @@ contract CalculatorReceiverOnSubnet is ITeleporterReceiver {
     function receiveTeleporterMessage(bytes32, address, bytes calldata message) external {
         // Only the Teleporter receiver can deliver a message.
         require(
-            msg.sender == address(teleporterMessenger), "ExtendedCalculatorReceiverOnSubnet: unauthorized TeleporterMessenger"
+            msg.sender == address(teleporterMessenger), "CalculatorReceiverOnDispatch: unauthorized TeleporterMessenger"
         );
 
         // Decoding the Action type:
@@ -31,11 +31,8 @@ contract CalculatorReceiverOnSubnet is ITeleporterReceiver {
         } else if (actionType == CalculatorAction.concatenate) {
             (string memory text1, string memory text2) = abi.decode(paramsData, (string, string));
             _calculatorConcatenateStrings(text1, text2);
-        } else if (actionType == CalculatorAction.tripleSum) {
-            (uint256 a, uint256 b, uint256 c) = abi.decode(paramsData, (uint256, uint256, uint256));
-            _calculatorTripleSum(a, b,c);
         } else {
-            revert("ReceiverOnSubnet: invalid action");
+            revert("CalculatorReceiverOnDispatch: invalid action");
         }
     }
 
@@ -59,9 +56,4 @@ contract CalculatorReceiverOnSubnet is ITeleporterReceiver {
 
         result_string = string(combined);
     }
-
-    function _calculatorTripleSum(uint256 _num1, uint256 _num2, uint256 _num3) internal {
-        result_num = _num1 + _num2 + _num3;
-    }
-
 }
