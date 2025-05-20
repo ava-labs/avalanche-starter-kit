@@ -17,3 +17,26 @@ out/
 .pnp.*
 
 yarn.lock
+
+# Environment variables
+.env
+
+# Foundry
+out/
+cache/
+broadcast/
+
+# Node
+node_modules/
+.next/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

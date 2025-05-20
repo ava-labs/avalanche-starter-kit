@@ -10,9 +10,29 @@ This development kit provides a minimal setup for developing and deploying Solid
 
 This kit utilizes a Dev Container specification for a consistent and isolated development environment. The container includes Foundry pre-installed and configured. You can run it using GitHub Codespaces or locally using Docker and VS Code.
 
+### Environment Configuration
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Edit the `.env` file with your values:
+   - `PK`: Your private key for signing transactions (for testing only)
+   - `FUNDED_ADDRESS`: Your funded address (derived from your private key)
+
+The following values come pre-configured for testing:
+   - `TELEPORTER_REGISTRY_C_CHAIN`: The Teleporter registry address
+   - `C_CHAIN_BLOCKCHAIN_ID_HEX`: The C-Chain blockchain ID
+
 ### Run on Github Codespace
 
 You can run directly on Github by clicking **Code**, switching to the **Codespaces** tab and clicking **Create codespace on main**. A new window will open with VS Code and all dependencies installed.
+
+For Codespaces, set up your environment variables in your repository:
+1. Go to your repository settings
+2. Navigate to Secrets and Variables > Codespaces
+3. Add your `PK` and `FUNDED_ADDRESS` as secrets
 
 ### Run Dev Container locally with Docker
 
@@ -52,3 +72,10 @@ cast call --rpc-url fuji-c <CONTRACT_ADDRESS> "viewFunction()(uint256)"
 ## Contract Examples
 
 You can find example contracts in the `contracts/` directory. These contracts demonstrate various smart contract patterns and functionalities.
+
+## Security Notes
+
+- Never share or commit your private keys
+- Never commit your `.env` file (it's already in .gitignore)
+- Always use environment variables for sensitive data
+- For production deployments, consider using more secure key management solutions
