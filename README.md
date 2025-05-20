@@ -30,15 +30,31 @@ cast wallet new my-avalanche-wallet
 ```
 This creates a wallet stored securely in `~/.foundry/wallets/my-avalanche-wallet`
 
-2. Get your wallet address:
+2. Get and store your wallet information:
 ```bash
-cast wallet address my-avalanche-wallet
+# Print and store your address
+echo "FUNDED_ADDRESS=$(cast wallet address my-avalanche-wallet)" >> .env
+# Print and store your private key
+echo "PK=$(cast wallet private-key my-avalanche-wallet)" >> .env
 ```
 
-3. Use your wallet's private key in commands:
+You can also view your wallet information anytime with:
 ```bash
---private-key $(cast wallet private-key my-avalanche-wallet)
+# View your address
+cast wallet address my-avalanche-wallet
+# View your private key (use with caution)
+cast wallet private-key my-avalanche-wallet
 ```
+
+3. You can now use your wallet in commands either way:
+```bash
+# Using Foundry wallet directly
+--private-key $(cast wallet private-key my-avalanche-wallet)
+# Or using stored environment variable
+--private-key $PK
+```
+
+> ⚠️ IMPORTANT: Never commit your .env file or share your private key. Add .env to your .gitignore file.
 
 ## Getting Test Tokens
 
