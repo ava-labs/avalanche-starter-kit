@@ -45,6 +45,19 @@ Now open the .env file and replace these values with your wallet information fro
 - `PK=` : Your private key (the one that starts with 0x...)
 - `FUNDED_ADDRESS=` : Your wallet address (the one that starts with 0x...)
 
+Then load the environment variables:
+```bash
+source .env
+```
+
+You can verify the variables are loaded:
+```bash
+# Should print your address
+echo $FUNDED_ADDRESS
+# Should print your private key
+echo $PK
+```
+
 > ⚠️ IMPORTANT: 
 > - Never commit your .env file or share your private key
 > - The .env file is already in .gitignore for your security
