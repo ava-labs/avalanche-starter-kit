@@ -10,6 +10,7 @@ import "@teleporter/ITeleporterMessenger.sol";
 import "@teleporter/ITeleporterReceiver.sol";
 
 contract ReceiverOnDispatchWithRegistry is ITeleporterReceiver {
+    // TODO: predeploy teleporter Registry and add (hardcoded) or tell user to Deploy
     // The Teleporter registry contract manages different Teleporter contract versions.
     TeleporterRegistry public immutable teleporterRegistry =
         TeleporterRegistry(0x827364Da64e8f8466c23520d81731e94c8DDe510);

@@ -12,6 +12,7 @@ import "./MyERC20Token.sol";
 import "./BridgeActions.sol";
 
 contract TokenMinterReceiverOnBulletin is ITeleporterReceiver {
+    // TODO: predeploy teleporter Registry and add (hardcoded) or tell user to Deploy
     TeleporterRegistry public immutable teleporterRegistry =
         TeleporterRegistry(0x827364Da64e8f8466c23520d81731e94c8DDe510);
     address public tokenAddress;
