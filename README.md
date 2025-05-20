@@ -4,57 +4,52 @@ This repository contains starter code for building cross-chain applications on A
 
 ## Prerequisites
 
-- [Foundry](https://book.getfoundry.sh/getting-started/installation)
-- [Git](https://git-scm.com/downloads)
+- A GitHub account to use Codespaces
+- Or locally: [Foundry](https://book.getfoundry.sh/getting-started/installation) and [Git](https://git-scm.com/downloads)
 
 ## Setup
 
-1. Clone the repository:
-```bash
-git clone https://github.com/ava-labs/avalanche-starter-kit.git
-cd avalanche-starter-kit
-```
+1. Open in Codespace:
+   - Click the green "Code" button above
+   - Select the "Codespaces" tab
+   - Click "Create codespace on main"
 
 2. Install dependencies:
 ```bash
 forge install
+
+# Note: You might see a warning about using a nightly build of Foundry. 
+# To mute this warning, run:
+export FOUNDRY_DISABLE_NIGHTLY_WARNING=1
 ```
 
 ## Wallet Management
 
-We use Foundry's built-in wallet management system for secure key handling:
-
 1. Create a new wallet:
 ```bash
-cast wallet new my-avalanche-wallet
+cast wallet new
 ```
-This creates a wallet stored securely in `~/.foundry/wallets/my-avalanche-wallet`
+You'll receive an output like this:
+```
+Address:     0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Private key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+```
 
-2. Get and store your wallet information:
+2. Set up your environment:
 ```bash
-# Print and store your address
-echo "FUNDED_ADDRESS=$(cast wallet address my-avalanche-wallet)" >> .env
-# Print and store your private key
-echo "PK=$(cast wallet private-key my-avalanche-wallet)" >> .env
+# Copy the example environment file
+cp .env.example .env
 ```
 
-You can also view your wallet information anytime with:
-```bash
-# View your address
-cast wallet address my-avalanche-wallet
-# View your private key (use with caution)
-cast wallet private-key my-avalanche-wallet
-```
+Now open the .env file and replace these values with your wallet information from step 1:
+- `PK=` : Your private key (the one that starts with 0x...)
+- `FUNDED_ADDRESS=` : Your wallet address (the one that starts with 0x...)
 
-3. You can now use your wallet in commands either way:
-```bash
-# Using Foundry wallet directly
---private-key $(cast wallet private-key my-avalanche-wallet)
-# Or using stored environment variable
---private-key $PK
-```
-
-> ⚠️ IMPORTANT: Never commit your .env file or share your private key. Add .env to your .gitignore file.
+> ⚠️ IMPORTANT: 
+> - Never commit your .env file or share your private key
+> - The .env file is already in .gitignore for your security
+> - Store your private key somewhere secure as backup
+> - Example values above are for demonstration only
 
 ## Getting Test Tokens
 
@@ -65,25 +60,11 @@ Before deploying contracts, get test tokens from:
 
 Check your balance:
 ```bash
-cast balance $(cast wallet address my-avalanche-wallet) --rpc-url https://api.avax-test.network/ext/bc/C/rpc
-```
+# Check balance on Fuji C-Chain
+cast balance $FUNDED_ADDRESS --rpc-url fuji-c
 
-## Environment Setup
-
-Create a `.env` file with the following variables:
-
-```bash
-# RPC URLs
-FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
-DISPATCH_RPC_URL=https://subnets.avax.network/dispatch/testnet/rpc
-
-# Blockchain IDs
-FUJI_CHAIN_ID=43113
-DISPATCH_CHAIN_ID=0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7
-
-# Contract Addresses
-TELEPORTER_REGISTRY_FUJI=0xF86Cb19Ad8405AEFa7d09C778215D2Cb6eBfB228
-TELEPORTER_MESSENGER_DISPATCH=0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf
+# Check balance on Dispatch
+cast balance $FUNDED_ADDRESS --rpc-url fuji-dispatch
 ```
 
 ## Usage
@@ -91,23 +72,40 @@ TELEPORTER_MESSENGER_DISPATCH=0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf
 ### Deploy Contracts
 
 ```bash
-forge create --rpc-url $FUJI_RPC_URL \
-  --private-key $(cast wallet private-key my-avalanche-wallet) \
+# Deploy to Fuji C-Chain
+forge create --rpc-url fuji-c \
+  --private-key $PK \
+  src/contracts/YourContract.sol:YourContract
+
+# Deploy to Dispatch
+forge create --rpc-url fuji-dispatch \
+  --private-key $PK \
   src/contracts/YourContract.sol:YourContract
 ```
 
 ### Send Transactions
 
 ```bash
-cast send --rpc-url $FUJI_RPC_URL \
-  --private-key $(cast wallet private-key my-avalanche-wallet) \
+# Send transaction on Fuji C-Chain
+cast send --rpc-url fuji-c \
+  --private-key $PK \
+  $CONTRACT_ADDRESS "functionName(uint256)" 123
+
+# Send transaction on Dispatch
+cast send --rpc-url fuji-dispatch \
+  --private-key $PK \
   $CONTRACT_ADDRESS "functionName(uint256)" 123
 ```
 
 ### Read Contract State
 
 ```bash
-cast call --rpc-url $FUJI_RPC_URL \
+# Read from Fuji C-Chain
+cast call --rpc-url fuji-c \
+  $CONTRACT_ADDRESS "functionName()(uint256)"
+
+# Read from Dispatch
+cast call --rpc-url fuji-dispatch \
   $CONTRACT_ADDRESS "functionName()(uint256)"
 ```
 
@@ -115,7 +113,6 @@ cast call --rpc-url $FUJI_RPC_URL \
 
 1. The Teleporter Registry needs to be predeployed on Dispatch. The address will be either hardcoded or you'll need to deploy it yourself.
 2. Make sure to use the correct RPC URLs and contract addresses for your target network.
-3. Never commit your `.env` file or expose your private keys.
 
 ## Learn More
 
