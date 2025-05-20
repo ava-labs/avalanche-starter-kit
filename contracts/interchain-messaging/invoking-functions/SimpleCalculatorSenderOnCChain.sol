@@ -14,8 +14,8 @@ contract SimpleCalculatorSenderOnCChain {
     function sendAddMessage(address destinationAddress, uint256 num1, uint256 num2) external {
         teleporterMessenger.sendCrossChainMessage(
             TeleporterMessageInput({
-                // Replace with chain id of your Subnet (see instructions in Readme)
-                destinationBlockchainID: 0xd7ed7b978d4d6c478123bf9b326d47e69f959206d34e42ea4de2d1d2acbc93ea, 
+                // BlockchainID of Dispatch L1
+                destinationBlockchainID: 0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7, 
                 destinationAddress: destinationAddress,
                 feeInfo: TeleporterFeeInfo({feeTokenAddress: address(0), amount: 0}),
                 requiredGasLimit: 100000,
