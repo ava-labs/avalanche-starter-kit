@@ -56,9 +56,11 @@ cp .env.example .env
 PK=your_private_key_here
 # Your Core wallet address
 FUNDED_ADDRESS=your_address_here
-# Blockchain IDs for cross-chain communication
-FUJI_BLOCKCHAIN_ID=0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7
-DISPATCH_BLOCKCHAIN_ID=your_dispatch_blockchain_id_here
+# Blockchain IDs in hex format
+FUJI_DISPATCH_BLOCKCHAIN_ID_HEX=0x9f3be606497285d0ffbb5ac9ba24aa60346a9b1812479ed66cb329f394a4b1c7
+FUJI_C_CHAIN_BLOCKCHAIN_ID_HEX=your_c_chain_blockchain_id_here
+
+...
 ```
 
 3. Load the environment:
@@ -101,11 +103,41 @@ cast balance $FUNDED_ADDRESS --rpc-url fuji-c
 cast balance $FUNDED_ADDRESS --rpc-url fuji-dispatch
 ```
 
-## ICM Relayer Setup
+## Cross-Chain Contract Deployment
 
-The ICM relayer is required for cross-chain message passing. In your Codespace:
+1. Deploy the messaging contracts:
+```bash
+# Deploy the sender contract on Fuji C-Chain
+forge create --rpc-url fuji-c \
+  --private-key $PK \
+  contracts/interchain-messaging/incentivize-relayer/senderWithFees.sol:SenderWithFeesOnCChain \
+  --constructor-args $FUJI_DISPATCH_BLOCKCHAIN_ID_HEX
 
-1. Create the relayer configuration:
+# Save the sender contract address
+export SENDER_ADDRESS="0x..."
+
+# Deploy the receiver contract on Dispatch
+forge create --rpc-url fuji-dispatch \
+  --private-key $PK \
+  contracts/interchain-messaging/incentivize-relayer/receiverWithFees.sol:ReceiverOnDispatch
+
+# Save the receiver contract address
+export RECEIVER_ADDRESS="0x..."
+```
+
+2. Approve tokens for the sender contract:
+```bash
+# Approve the sender contract to spend your FEE tokens
+# The amount 500000000000000000 is 0.5 FEE tokens (the required fee amount)
+cast send --rpc-url fuji-c \
+  --private-key $PK \
+  $FEE_TOKEN_ADDRESS \
+  "approve(address,uint256)" \
+  $SENDER_ADDRESS \
+  500000000000000000
+```
+
+3. Create the relayer configuration:
 ```bash
 mkdir -p config
 cat > config/config.json << EOL
@@ -113,13 +145,13 @@ cat > config/config.json << EOL
     "logLevel": "info",
     "chains": [
         {
-            "chainID": "$FUJI_BLOCKCHAIN_ID",
+            "chainID": "$FUJI_C_CHAIN_BLOCKCHAIN_ID_HEX",
             "endpoint": "https://api.avax-test.network/ext/bc/C/rpc",
             "from": "$FUNDED_ADDRESS",
             "privateKey": "$PK"
         },
         {
-            "chainID": "$DISPATCH_BLOCKCHAIN_ID",
+            "chainID": "$FUJI_DISPATCH_BLOCKCHAIN_ID_HEX",
             "endpoint": "https://subnets.avax.network/dispatch/testnet/rpc",
             "from": "$FUNDED_ADDRESS",
             "privateKey": "$PK"
@@ -129,11 +161,35 @@ cat > config/config.json << EOL
 EOL
 ```
 
-2. Run the relayer:
+4. Run the relayer:
 ```bash
 docker run -v $(pwd)/config:/app/config \
     ghcr.io/ava-labs/icm-relayer:latest \
     --config /app/config/config.json
+```
+
+## Testing Cross-Chain Messaging with Fees
+
+After setting up the contracts and relayer, you can test the cross-chain messaging:
+
+1. Send a message from Fuji to Dispatch:
+```bash
+# Send a message through the sender contract
+cast send --rpc-url fuji-c \
+  --private-key $PK \
+  $SENDER_ADDRESS \
+  "sendMessage(address,string,address)" \
+  $RECEIVER_ADDRESS \
+  "Hello from Fuji with fees!" \
+  $FEE_TOKEN_ADDRESS
+```
+
+2. Check the received message:
+```bash
+# Wait a few moments for the message to be relayed
+cast call --rpc-url fuji-dispatch \
+  $RECEIVER_ADDRESS \
+  "lastMessage()(string)"
 ```
 
 ## Contract Deployment
@@ -143,13 +199,13 @@ docker run -v $(pwd)/config:/app/config \
 forge create --rpc-url fuji-c \
   --private-key $PK \
   src/contracts/YourContract.sol:YourContract \
-  --constructor-args $FUJI_BLOCKCHAIN_ID
+  --constructor-args $FUJI_C_CHAIN_BLOCKCHAIN_ID_HEX
 
 # Deploy to Dispatch
 forge create --rpc-url fuji-dispatch \
   --private-key $PK \
   src/contracts/YourContract.sol:YourContract \
-  --constructor-args $DISPATCH_BLOCKCHAIN_ID
+  --constructor-args $FUJI_DISPATCH_BLOCKCHAIN_ID_HEX
 ```
 
 ## Sending Cross-Chain Messages
