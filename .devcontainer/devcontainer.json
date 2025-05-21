@@ -4,6 +4,13 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest",
+			"moby": true,
+			"dockerDashComposeVersion": "v2"
+		}
+	},
 	"remoteEnv": {
 		"PATH": "${containerEnv:PATH}:/usr/local/bin/"
 	},
