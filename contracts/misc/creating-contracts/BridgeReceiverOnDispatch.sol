@@ -14,7 +14,7 @@ import "./BridgeActions.sol";
 contract TokenMinterReceiverOnBulletin is ITeleporterReceiver {
     // TODO: predeploy teleporter Registry and add (hardcoded) or tell user to Deploy
     TeleporterRegistry public immutable teleporterRegistry =
-        TeleporterRegistry(0x827364Da64e8f8466c23520d81731e94c8DDe510);
+        TeleporterRegistry(0xF86Cb19Ad8405AEFa7d09C778215D2Cb6eBfB228);
     address public tokenAddress;
 
     function receiveTeleporterMessage(bytes32, address, bytes calldata message) external {

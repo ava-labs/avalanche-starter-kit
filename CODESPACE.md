@@ -37,6 +37,8 @@ export FOUNDRY_DISABLE_NIGHTLY_WARNING=1
      - Account address (starts with 0x)
      - Private key (starts with 0x)
 
+<Callout type="warn" title="The private key is for testing only. Never use it in production or share it with anyone. Do not use a private key holding real funds on testnet, separate mainnet and testnet keys!" />
+
 > ⚠️ IMPORTANT: 
 > - Never share your private key with anyone
 > - Keep your private key secure and backed up

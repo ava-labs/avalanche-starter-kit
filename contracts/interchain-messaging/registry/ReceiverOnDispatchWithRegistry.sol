@@ -13,7 +13,7 @@ contract ReceiverOnDispatchWithRegistry is ITeleporterReceiver {
     // TODO: predeploy teleporter Registry and add (hardcoded) or tell user to Deploy
     // The Teleporter registry contract manages different Teleporter contract versions.
     TeleporterRegistry public immutable teleporterRegistry =
-        TeleporterRegistry(0x827364Da64e8f8466c23520d81731e94c8DDe510);
+        TeleporterRegistry(0xF86Cb19Ad8405AEFa7d09C778215D2Cb6eBfB228);
 
     string public lastMessage;
 
