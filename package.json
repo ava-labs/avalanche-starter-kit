@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@truffle/contract": "^4.6.31"
+  }
+}
