@@ -21,7 +21,7 @@
 // require('dotenv').config();
 // const mnemonic = process.env["MNEMONIC"];
 // const infuraProjectId = process.env["INFURA_PROJECT_ID"];
- 
+
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
@@ -42,28 +42,28 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    // development: {
-    //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
-    //  network_id: "*",       // Any network (default: none)
-    // },
-    //
-    // goerli: {
-    //   provider: () => new HDWalletProvider(mnemonic, `https://goerli.infura.io/v3/${infuraProjectId}`),
-    //   network_id: 5,       // Goerli's id
-    //   chain_id: 5
-    // }
+    development: {
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 8545,            // Standard Ethereum port (default: none)
+      network_id: ("none"),       // Any network (default: none)
+    },
+
+    holesky: {
+      provider: () => new HDWalletProvider(mnemonic, `https://holesky.infura.io/v3/a3ed39cc3e86487091dc4690a8edfe65}`),
+      network_id: 5,       // holesky's id
+      chain_id: 5
+    }
   },
 
   // Set default mocha options here, use special reporters etc.
   mocha: {
-    // timeout: 100000
+    timeout: 100000
   },
 
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.13",      // Fetch exact version from solc-bin
+      version: "0.8.30",      // Fetch exact version from solc-bin
     }
   }
 };
