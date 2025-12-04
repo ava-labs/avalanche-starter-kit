@@ -9,7 +9,12 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     build-essential \
+    python3 \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages for utility scripts (e.g., Base58 to hex conversion)
+RUN pip3 install --break-system-packages base58
 
 # Install Foundry using foundryup
 ENV FOUNDRY_DIR=/home/vscode/.foundry
