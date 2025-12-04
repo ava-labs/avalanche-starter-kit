@@ -22,8 +22,7 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"juanblanco.solidity",
-				"NomicFoundation.hardhat-solidity"
+				"JuanBlanco.solidity"
 			],
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "bash"

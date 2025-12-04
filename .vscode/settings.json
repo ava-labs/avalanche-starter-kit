@@ -4,8 +4,20 @@
     "editor.defaultFormatter": "JuanBlanco.solidity"
   },
   "solidity.formatter": "forge",
-  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.packageDefaultDependenciesContractsDirectory": "",
   "solidity.packageDefaultDependenciesDirectory": "lib",
-  "solidity.defaultCompiler": "localNodeModule",
-  "solidity.compileUsingRemoteVersion": "v0.8.18+commit.87f61d96",
+  "solidity.defaultCompiler": "remote",
+  "solidity.compileUsingRemoteVersion": "v0.8.25+commit.b61c2a91",
+  "solidity.remappings": [
+    "ds-test/=lib/forge-std/lib/ds-test/src/",
+    "forge-std/=lib/forge-std/src/",
+    "@openzeppelin/contracts@4.8.1/=lib/openzeppelin-contracts/contracts/",
+    "@avalabs/subnet-evm-contracts@1.2.0=lib/icm-contracts/lib/subnet-evm/contracts/",
+    "@teleporter/=lib/icm-contracts/contracts/teleporter/",
+    "@teleporter-mocks/=lib/icm-contracts/contracts/mocks/",
+    "@avalanche-interchain-token-transfer/=lib/icm-contracts/contracts/ictt/"
+  ],
+  "files.associations": {
+    "*.sol": "solidity"
+  }
 }
