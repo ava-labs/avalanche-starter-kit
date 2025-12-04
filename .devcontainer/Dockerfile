@@ -1,5 +1,5 @@
-# Use a specific devcontainer base with Debian
-FROM mcr.microsoft.com/devcontainers/base:debian
+# Use Debian Bookworm (stable) - required for docker-in-docker moby support
+FROM mcr.microsoft.com/devcontainers/base:bookworm
 
 # Switch to root user to install packages
 USER root
