@@ -8,6 +8,7 @@ evm_version = "shanghai"
 [rpc_endpoints]
 fuji-c = "https://api.avax-test.network/ext/bc/C/rpc"
 fuji-dispatch = "https://subnets.avax.network/dispatch/testnet/rpc"
+fuji-l1 = ""
 
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
