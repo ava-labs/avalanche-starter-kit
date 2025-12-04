@@ -1,27 +1,29 @@
-FROM --platform=linux/amd64 ghcr.io/foundry-rs/foundry:latest AS foundry
-FROM mcr.microsoft.com/devcontainers/base
+# Use a specific devcontainer base with Debian
+FROM mcr.microsoft.com/devcontainers/base:debian
 
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
-COPY --from=foundry /usr/local/bin/cast /usr/local/bin/cast
-COPY --from=foundry /usr/local/bin/anvil /usr/local/bin/anvil
-COPY --from=foundry /usr/local/bin/chisel /usr/local/bin/chisel
-
-RUN mkdir -p /home/vscode/.foundry/bin
-COPY --from=foundry /usr/local/bin/forge /home/vscode/.foundry/bin/forge
-
-# Switch to root user to install system packages
+# Switch to root user to install packages
 USER root
 
-# Install Git
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     git \
+    curl \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Ensure vscode owns its home directory
-RUN chown -R vscode:vscode /home/vscode
+# Install Foundry using foundryup
+ENV FOUNDRY_DIR=/home/vscode/.foundry
+ENV PATH="${FOUNDRY_DIR}/bin:${PATH}"
 
-# Set HOME environment variable
-ENV HOME=/home/vscode
+# Create foundry directory and set ownership
+RUN mkdir -p ${FOUNDRY_DIR}/bin && chown -R vscode:vscode ${FOUNDRY_DIR}
 
-# Switch back to vscode user
+# Switch to vscode user for foundry installation
 USER vscode
+
+# Install foundry
+RUN curl -L https://foundry.paradigm.xyz | bash && \
+    ${FOUNDRY_DIR}/bin/foundryup
+
+# Ensure HOME is set correctly
+ENV HOME=/home/vscode

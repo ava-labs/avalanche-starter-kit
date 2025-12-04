@@ -1,4 +1,3 @@
-// For format details, see https://aka.ms/devcontainer.json.
 {
 	"name": "Avalanche Starter Kit",
 	"build": {
@@ -12,16 +11,23 @@
 		}
 	},
 	"remoteEnv": {
-		"PATH": "${containerEnv:PATH}:/usr/local/bin/"
+		"PATH": "${containerEnv:HOME}/.foundry/bin:${containerEnv:PATH}",
+		"FOUNDRY_DISABLE_NIGHTLY_WARNING": "1"
 	},
 	"postCreateCommand": {
-		"init-git-submodules": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive"
+		"init-git": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+		"init-submodules": "git submodule update --init --recursive",
+		"verify-foundry": "forge --version && cast --version && anvil --version"
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"juanblanco.solidity"
-			]
+				"juanblanco.solidity",
+				"NomicFoundation.hardhat-solidity"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash"
+			}
 		}
 	}
 }
