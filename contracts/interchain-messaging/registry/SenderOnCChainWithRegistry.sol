@@ -5,7 +5,7 @@
 
 pragma solidity ^0.8.18;
 
-import "@teleporter/upgrades/TeleporterRegistry.sol";
+import "@teleporter/registry/TeleporterRegistry.sol";
 import "@teleporter/ITeleporterMessenger.sol";
 
 contract SenderOnCChain {
